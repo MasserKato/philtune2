@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">PhilTune</a>
+      <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navber" aria-controls="Navber" aria-expanded="false" aria-label="ナビゲーションの切替">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="Navber">
+
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item {% block schedule_active %}{% endblock %}">
+            <a class="nav-link" href="#">練習</a>
+          </li>
+          <li class="nav-item {% block stage_active %}{% endblock %}">
+            <a class="nav-link" href="#">乗り番</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              ユーザー名
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">マイプロフィール</a>
+              <a class="dropdown-item" href="#">基本設定</a>
+              <a class="dropdown-item" href="#">アイコン設定</a>
+              <a class="dropdown-item" href="#">パスワード変更</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">ログアウト</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown {% block inquiry_active %}{% endblock %}">
+            <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              ヘルプ
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">使い方</a>
+              <a class="dropdown-item" href="{% url 'schedule:inquiry' %}">お問い合わせ</a>
+            </div>
+          </li>
+        </ul>
+         <ul class="navbar-nav ml-auto">
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'account_logout' %}">Log Out</a>
+          </li>
+          {% else %}
+          <li class="nav-item {% block active_signup %}{% endblock %}">
+            <a class="nav-link" href="{% url 'account_signup' %}">Sign Up</a>
+          </li>
+          <li class="nav-item {% block active_login %}{% endblock %}">
+            <a class="nav-link" href="{% url 'account_login' %}">Log In</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </nav>
+    {% block header %}{% endblock %}
+
+    {% if messages %}
+    <div class="container">
+        <div class="row">
+            <div class="my-div-style w-100">
+                <ul class="messages" style="list-style: none;">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+                        {{ message }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% block contents %}{% endblock %}
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  </body>
+</html>
