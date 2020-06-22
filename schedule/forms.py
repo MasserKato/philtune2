@@ -1,5 +1,6 @@
 from django import forms
 from django.core.mail import EmailMessage
+from .models import Schedule, Reaction
 
 
 class InquiryForm(forms.Form):
@@ -41,3 +42,28 @@ class InquiryForm(forms.Form):
 
         message = EmailMessage(subject=subject, body=message, from_email=from_email, to=to_list, cc=cc_list)
         message.send()
+
+
+class ScheduleCreateForm(forms.ModelForm):
+    class Meta:
+        model = Schedule
+        fields = ('title', 'detail', 'location', 'date', 'start_at', 'end_at',)
+        widgets = {
+            'date': forms.SelectDateWidget,
+            'start_at': forms.TimeInput(format='%H:%M'),
+            'end_at': forms.TimeInput(format='%H:%M'),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+
+"""
+class ReactionCreateForm(forms.ModelForm):
+    class Meta:
+        model = Reaction
+        fields = ('state', 'comment',)
+        widgets = {
+            
+        }"""

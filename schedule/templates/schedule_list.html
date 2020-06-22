@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}練習予定一覧|PhilTune{% endblock %}
+{% block schedule_active %}active{% endblock %}
+{% block contents %}
+<div class="container">
+  <div class="row">
+    <div class="my-div-style w-100">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="clearfix">
+          <a class="btn btn-primary float-right" href="{% url 'schedule:schedule_create' %}">新規作成</a>
+        </div>
+          <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">開始日時</th>
+                  <th scope="col">練習名</th>
+                  <th scope="col">場所</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for schedule in schedule_list %}
+                <tr>
+                  <td>{{ schedule.date}}</td>
+                  <td><a href="{% url 'schedule:schedule_detail' schedule.pk %}">
+                    {{ schedule.title}}
+                  </a></td>
+                  <td>{{ schedule.location }}</td>
+                  <td>出席</td>
+                </tr>
+                {% empty %}
+                  <p>練習予定はありません。</p>
+                {% endfor %}
+              </tbody>
+          </table>
+          <!-- ページネーション処理 -->
+            {% if is_paginated %}
+                <ul class="pagination">
+                    <!-- 前ページへのリンク -->
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    <!-- ページ数表示 -->
+                    {% for page_num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == page_num %}
+                            <li class="page-item active"><a class="page-link" href="#">{{ page_num }}</a></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- 次ページへのリンク -->
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}練習予定編集|Philtune{% endblock %}
+{% block schedule_active %}active{% endblock %}
+{% block contents %}
+<div class="container">
+  <div class="row">
+    <div class="my-div-style w-100">
+      <form method="POST" enctype='multipart/form-data'>
+        {% csrf_token %}
+        <table class="table">
+          {{ form.as_table }}
+        </table>
+        <button class="btn btn-primary" type="submit">更新</button>
+        <a class="btn btn-secondary ml-2" href="{% url 'schedule:schedule_detail' object.pk %}">キャンセル</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
