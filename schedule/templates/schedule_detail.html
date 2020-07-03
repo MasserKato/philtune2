@@ -51,8 +51,31 @@
         </div>
       </div>
     </div>
+    <hr>
+    <div class="row">
+      <div class="col-3">
+        <strong>あなたの回答</strong>
+        <div class="col-9">
+          {{ reaction.state }}
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-3">
+        <strong>あなたのコメント</strong>
+        <div class="col-9">
+          {{ reaction.comment }}
+        </div>
+      </div>
+    </div>
     <a class="btn btn-success mt-5 mb-3" href="{% url 'schedule:schedule_update' object.pk %}">編集</a>
     <a class="btn btn-danger mt-5 mb-3" href="{% url 'schedule:schedule_delete' object.pk %}">削除</a>
+    {% if reaction.state == None %}
+    <a class="btn btn-primary mt-5 mb-3" href="{% url 'schedule:reaction_create' object.pk %}">出欠送信</a>
+    {% else %}
+    <a class="btn btn-secondary mt-5 mb-3" href="{% url 'schedule:reaction_update' reaction.pk %}">出欠編集</a>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

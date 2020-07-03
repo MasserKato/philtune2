@@ -17,28 +17,31 @@
                   <th scope="col">開始日時</th>
                   <th scope="col">練習名</th>
                   <th scope="col">場所</th>
-                  <th scope="col"></th>
+                  <th scope="col">回答</th>
                 </tr>
               </thead>
               <tbody>
-                {% for schedule in schedule_list %}
+                {% for schedule in page_obj %}
                 <tr>
                   <td>{{ schedule.date}}</td>
                   <td><a href="{% url 'schedule:schedule_detail' schedule.pk %}">
                     {{ schedule.title}}
                   </a></td>
                   <td>{{ schedule.location }}</td>
-                  <td>出席</td>
+                  {% if schedule.state == None %}
+                  <td>未回答</td>
+                  {% else %}
+                  <td>{{ schedule.state }}</td>
+                  {% endif %}
                 </tr>
                 {% empty %}
                   <p>練習予定はありません。</p>
                 {% endfor %}
               </tbody>
           </table>
-          <!-- ページネーション処理 -->
-            {% if is_paginated %}
+              {% if page_obj.has_previous or page_obj.has_next %}
                 <ul class="pagination">
-                    <!-- 前ページへのリンク -->
+
                     {% if page_obj.has_previous %}
                         <li class="page-item">
                             <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
@@ -47,7 +50,7 @@
                         </li>
                     {% endif %}
 
-                    <!-- ページ数表示 -->
+
                     {% for page_num in page_obj.paginator.page_range %}
                         {% if page_obj.number == page_num %}
                             <li class="page-item active"><a class="page-link" href="#">{{ page_num }}</a></li>
@@ -56,7 +59,7 @@
                         {% endif %}
                     {% endfor %}
 
-                    <!-- 次ページへのリンク -->
+
                     {% if page_obj.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?page={{ page_obj.next_page_number }}">
@@ -65,7 +68,9 @@
                         </li>
                     {% endif %}
                 </ul>
-            {% endif %}
+
+              {% endif %}
+
       </div>
     </div>
   </div>

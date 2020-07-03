@@ -1,0 +1,122 @@
+[
+  {
+    "model": "accounts.Instrument",
+    "pk": 1,
+    "fields": {
+      "name": "ヴァイオリン",
+      "section_name": "弦",
+      "short_name": "Vn"
+    }
+
+  },
+  {
+    "model": "accounts.Instrument",
+    "pk": 2,
+    "fields": {
+      "name": "ヴィオラ",
+      "section_name": "弦",
+      "short_name": "Va"
+    }
+
+  },
+  {
+    "model": "accounts.Instrument",
+    "pk": 3,
+    "fields": {
+      "name": "チェロ",
+      "section_name": "弦",
+      "short_name": "Vc"
+    }
+
+  },
+  {
+    "model": "accounts.Instrument",
+    "pk": 4,
+    "fields": {
+      "name": "コントラバス",
+      "section_name": "弦",
+      "short_name": "Cb"
+    }
+
+  },
+  {
+    "model": "accounts.Instrument",
+    "pk": 5,
+    "fields": {
+      "name": "フルート",
+      "section_name": "木",
+      "short_name": "Fl"
+    }
+
+  },
+  {
+    "model": "accounts.Instrument",
+    "pk": 6,
+    "fields": {
+      "name": "オーボエ",
+      "section_name": "木",
+      "short_name": "Ob"
+    }
+
+  },
+  {
+    "model": "accounts.Instrument",
+    "pk": 7,
+    "fields": {
+      "name": "クラリネット",
+      "section_name": "木",
+      "short_name": "Cl"
+    }
+
+  },
+  {
+    "model": "accounts.Instrument",
+    "pk": 8,
+    "fields": {
+      "name": "ファゴット",
+      "section_name": "木",
+      "short_name": "Fg"
+    }
+
+  },
+  {
+    "model": "accounts.Instrument",
+    "pk": 9,
+    "fields": {
+      "name": "ホルン",
+      "section_name": "金",
+      "short_name": "Hr"
+    }
+
+  },
+  {
+    "model": "accounts.Instrument",
+    "pk": 10,
+    "fields": {
+      "name": "トランペット",
+      "section_name": "金",
+      "short_name": "Tp"
+    }
+
+  },
+  {
+    "model": "accounts.Instrument",
+    "pk": 11,
+    "fields": {
+      "name": "トロンボーン",
+      "section_name": "金",
+      "short_name": "Tb"
+    }
+
+  },
+  {
+    "model": "accounts.Instrument",
+    "pk": 12,
+    "fields": {
+      "name": "チューバ",
+      "section_name": "金",
+      "short_name": "Tu"
+    }
+
+  }
+]

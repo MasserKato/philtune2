@@ -59,11 +59,17 @@ class ScheduleCreateForm(forms.ModelForm):
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
 
-"""
+
 class ReactionCreateForm(forms.ModelForm):
+    CHOICES = [('出席','出席'),('欠席','欠席'),('遅刻','遅刻'),('早退','早退')]
+    state = forms.ChoiceField(label='回答', choices=CHOICES,widget=forms.RadioSelect)
+    comment = forms.CharField(label='コメント', required=False)
+
     class Meta:
         model = Reaction
         fields = ('state', 'comment',)
-        widgets = {
-            
-        }"""
+
+    def clean_email(self):
+        comment = self.cleaned_data['comment']
+        if len(comment) > 40:
+            raise forms.ValidationError('コメントは40文字以内にしてください。')

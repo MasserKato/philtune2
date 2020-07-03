@@ -1,6 +1,6 @@
 from accounts.models import CustomUser
 from django.db import models
-import datetime
+from django.utils.timezone import now
 
 
 class Schedule(models.Model):
@@ -8,9 +8,9 @@ class Schedule(models.Model):
     title = models.CharField(verbose_name='練習名', max_length=20)
     location = models.CharField(verbose_name='練習場所', max_length=40, blank=True, null=True)
     detail = models.TextField(verbose_name='練習内容', blank=True, null=True)
-    date = models.DateField(verbose_name='練習日', default=datetime.date.today())
-    start_at = models.TimeField(verbose_name='開始時刻', default=datetime.datetime.today())
-    end_at = models.TimeField(verbose_name='終了時刻', default=datetime.datetime.today())
+    date = models.DateField(verbose_name='練習日', default=now)
+    start_at = models.TimeField(verbose_name='開始時刻', default='14:00:00')
+    end_at = models.TimeField(verbose_name='終了時刻', default='17:00:00')
     created_at = models.DateTimeField(verbose_name='作成日時', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日時', auto_now=True)
 
