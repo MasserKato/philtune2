@@ -37,6 +37,7 @@ INSTALLED_APPS = [
 
     'schedule.apps.ScheduleConfig',
     'accounts.apps.AccountsConfig',
+    'music.apps.MusicConfig',
 
     'django.contrib.sites',
     'allauth',
@@ -157,3 +158,5 @@ MESSAGE_TAGS = {
     messages.SUCCESS: 'alert alert-success',
     messages.INFO: 'alert alert-info',
 }
+
+# ここから開発用なので本番はコメントアウト
