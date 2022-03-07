@@ -1,21 +1,23 @@
-from models import Instrument
+from .models import Part
 
 
 def main():
-    Instrument.object.bulk_create([
-        Instrument(name='ヴァイオリン', section_name='弦', short_name='Vn'),
-        Instrument(name='ヴィオラ', section_name='弦', short_name='Va'),
-        Instrument(name='チェロ', section_name='弦', short_name='Vc'),
-        Instrument(name='コントラバス', section_name='弦', short_name='Cb'),
-        Instrument(name='フルート', section_name='木', short_name='Fl'),
-        Instrument(name='オーボエ', section_name='木', short_name='Ob'),
-        Instrument(name='クラリネット', section_name='木', short_name='Cl'),
-        Instrument(name='ファゴット', section_name='木', short_name='Fg'),
-        Instrument(name='ホルン', section_name='金', short_name='Hr'),
-        Instrument(name='トランペット', section_name='金', short_name='Tp'),
-        Instrument(name='トロンボーン', section_name='金', short_name='Tb'),
-        Instrument(name='チューバ', section_name='金', short_name='Tu'),
-        Instrument(name='パーカッション', section_name='打', short_name='Per'),
-        Instrument(name='ピアノ', section_name='鍵', short_name='Pf'),
+    Part.object.bulk_create([
+        Instrument(name='ヴァイオリン', wind=False, woodwind=False, brass=False, string=True, short_name='Vn.'),
+        Instrument(name='ヴィオラ', wind=False, woodwind=False, brass=False, string=True, short_name='Va.'),
+        Instrument(name='チェロ', wind=False, woodwind=False, brass=False, string=True, short_name='Vc.'),
+        Instrument(name='コントラバス', wind=False, woodwind=False, brass=False, string=True, short_name='Cb.'),
+        Instrument(name='フルート', wind=True, woodwind=True, brass=False, string=False, short_name='Fl.'),
+        Instrument(name='オーボエ', wind=True, woodwind=True, brass=False, string=False, short_name='Ob.'),
+        Instrument(name='クラリネット', wind=True, woodwind=True, brass=False, string=False, short_name='Cl.'),
+        Instrument(name='ファゴット', wind=True, woodwind=True, brass=False, string=False, short_name='Fg.'),
+
+        Instrument(name='ホルン', wind=True, woodwind=False, brass=True, string=False, short_name='Hr.'),
+        Instrument(name='トランペット', wind=True, woodwind=False, brass=True, string=False, short_name='Tp.'),
+        Instrument(name='トロンボーン', wind=True, woodwind=False, brass=True, string=False, short_name='Tb.'),
+        Instrument(name='チューバ', wind=True, woodwind=False, brass=True, string=False, short_name='Tu.'),
+
+        Instrument(name='パーカッション', wind=False, woodwind=False, brass=False, string=False, short_name='Per.'),
+        Instrument(name='その他', wind=False, woodwind=False, brass=False, string=False, short_name='Etc.'),
     ])
     return 0

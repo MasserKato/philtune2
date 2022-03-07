@@ -1,4 +1,5 @@
 from accounts.models import CustomUser
+from music.models import Music
 from django.db import models
 from django.utils.timezone import now
 
@@ -14,6 +15,7 @@ class Schedule(models.Model):
     end_at = models.TimeField(verbose_name='終了時刻', default='17:00:00')
     created_at = models.DateTimeField(verbose_name='作成日時', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日時', auto_now=True)
+    music = models.ManyToManyField(Music, verbose_name='練習する曲', null=True)
 
     class Meta:
         verbose_name_plural = 'Schedule'

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}登録曲一覧|PhilTune{% endblock %}
+{% block music_active %}active{% endblock %}
+{% block contents %}
+<div class="container">
+  <div class="row">
+    <div class="my-div-style w-100">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="clearfix">
+          <a class="btn btn-primary float-right" href="{% url 'music:music_create' %}">新規登録</a>
+        </div>
+          <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">練習開始日</th>
+                  <th scope="col">練習終了日</th>
+                  <th scope="col">曲名</th>
+                  <th scope="col">区分</th>
+                  <th scope="col">回答</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for music in page_obj %}
+                <tr>
+                  <td>{{ music.start_date}}</td>
+                  <td>{{ music.end_date}}</td>
+                  <td><a href="{% url 'music:music_detail' music.pk %}">
+                    {{ music.title}}
+                  </a></td>
+                  <td>{{ music.category }}</td>
+                  {% if stage.state == None %}
+                  <td>降り番(未回答)</td>
+                  {% else %}
+                  <td>{{ stage.state }}</td>
+                  {% endif %}
+                </tr>
+                {% empty %}
+                  <p>登録された曲はありません。</p>
+                {% endfor %}
+              </tbody>
+          </table>
+              {% if page_obj.has_previous or page_obj.has_next %}
+                <ul class="pagination">
+
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+
+                    {% for page_num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == page_num %}
+                            <li class="page-item active"><a class="page-link" href="#">{{ page_num }}</a></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+
+              {% endif %}
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

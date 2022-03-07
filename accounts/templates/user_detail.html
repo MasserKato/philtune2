@@ -37,10 +37,20 @@
     <hr>
     <div class="row">
       <div class="col-3">
-        <strong>ひとこと</strong>
+        <strong>スタッフ権限</strong>
       </div>
           <div class="col-9">
-            {{ object.bio }}
+            {{ object.is_staff }}
+          </div>
+
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-3">
+        <strong>スーパーユーザー権限</strong>
+      </div>
+          <div class="col-9">
+            {{ object.is_superuser }}
           </div>
 
     </div>

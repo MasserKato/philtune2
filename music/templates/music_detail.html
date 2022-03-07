@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}曲詳細|PhilTune{% endblock %}
+{% block music_active %}active{% endblock %}
+{% block contents %}
+<div class="container">
+  <div class="my-div-style w-100">
+    <div class="row">
+      <div class="col-3">
+        <strong>曲名</strong>
+      </div>
+      <div class="col-9">
+        {{ object.title }}({{ object.short_title}})
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-3">
+        <strong>練習開始日</strong>
+      </div>
+          <div class="col-9">
+            {{ object.start_date }}
+          </div>
+
+    </div>
+    <div class="row">
+      <div class="col-3">
+        <strong>練習終了日</strong>
+      </div>
+          <div class="col-9">
+            {{ object.end_date }}
+          </div>
+
+    </div>
+      <hr>
+    <div class="row">
+      <div class="col-3">
+        <strong>区分</strong>
+      </div>
+      <div class="col-9">
+        {{ object.category }}
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-3">
+        <strong>あなたの乗り番</strong>
+        <div class="col-9">
+          {{ stage.state }}
+        </div>
+      </div>
+    </div>
+    <hr>
+    <a class="btn btn-success mt-5 mb-3" href="{% url 'music:music_update' object.pk %}">編集</a>
+    <a class="btn btn-danger mt-5 mb-3" href="{% url 'music:music_delete' object.pk %}">削除</a>
+    {% if reaction.state == None %}
+    <a class="btn btn-primary mt-5 mb-3" href="{% url 'music:stage_create' object.pk %}">乗り番送信</a>
+    {% else %}
+    <a class="btn btn-secondary mt-5 mb-3" href="{% url 'music:stage_update' stage.pk %}">乗り番編集</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -47,7 +47,7 @@ class InquiryForm(forms.Form):
 class ScheduleCreateForm(forms.ModelForm):
     class Meta:
         model = Schedule
-        fields = ('title', 'detail', 'location', 'date', 'start_at', 'end_at',)
+        fields = ('title', 'detail', 'location', 'date', 'start_at', 'end_at', 'music')
         widgets = {
             'date': forms.SelectDateWidget,
             'start_at': forms.TimeInput(format='%H:%M'),

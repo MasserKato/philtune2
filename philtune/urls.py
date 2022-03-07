@@ -22,4 +22,5 @@ urlpatterns = [
     path('', include('schedule.urls')),
     path('accounts/', include('allauth.urls')),
     path('', include('accounts.urls')),
+    path('', include('music.urls')),
 ]
