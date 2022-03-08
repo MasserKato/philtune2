@@ -37,7 +37,6 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="{% url 'accounts:user_detail' user.id %}">マイプロフィール</a>
-              <a class="dropdown-item" href="{% url 'accounts:user_update' user.id %}">基本設定</a>
               <a class="dropdown-item" href="#">アイコン設定(開発中)</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="{% url 'account_logout' %}">ログアウト</a>
@@ -49,7 +48,7 @@
               ヘルプ
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">使い方</a>
+              <a class="dropdown-item" href="{% url 'schedule:help' %}">使い方</a>
               <a class="dropdown-item" href="{% url 'schedule:inquiry' %}">お問い合わせ</a>
             </div>
           </li>
@@ -58,10 +57,10 @@
           {% if user.is_authenticated %}
           {% else %}
           <li class="nav-item {% block active_signup %}{% endblock %}">
-            <a class="nav-link" href="{% url 'account_signup' %}">Sign Up</a>
+            <a class="nav-link" href="{% url 'account_signup' %}">新規登録</a>
           </li>
           <li class="nav-item {% block active_login %}{% endblock %}">
-            <a class="nav-link" href="{% url 'account_login' %}">Log In</a>
+            <a class="nav-link" href="{% url 'account_login' %}">ログイン</a>
           </li>
           {% endif %}
         </ul>
