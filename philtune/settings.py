@@ -11,6 +11,7 @@ AWS_SES_ACCESS_KEY_ID = os.environ.get('AWS_SES_ACCESKEY_ID')
 AWS_SES_SECRET_ACCESS_KEY = os.environ.get('AWS_SES_SECRET_ACCESS_KEY')
 EMAIL_BACKEND = 'django_ses.SESBackend'
 
+"""
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -47,3 +48,4 @@ LOGGING = {
         },
     }
 }
+"""
