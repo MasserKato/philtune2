@@ -17,10 +17,32 @@
     <hr>
     <div class="row">
       <div class="col-3">
-        <strong>練習場所</strong>
+        <strong>場所</strong>
       </div>
           <div class="col-9">
             {{ object.location }}
+          </div>
+
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-3">
+        <strong>場所URL</strong>
+      </div>
+          <div class="col-9">
+            {{ object.url }}
+          </div>
+
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-3">
+        <strong>扱う曲</strong>
+      </div>
+          <div class="col-9">
+            {% for music in object.music.all %}
+            {{ music.title }}<br>
+            {% endfor %}
           </div>
 
     </div>
@@ -37,27 +59,26 @@
     <div class="row">
       <div class="col-3">
         <strong>作成日時</strong>
-        <div class="col-9">
-          {{ object.created_at }}
-        </div>
+      </div>
+      <div class="col-9">
+        {{ object.created_at }}
       </div>
     </div>
-    <hr>
     <div class="row">
       <div class="col-3">
         <strong>更新日時</strong>
-        <div class="col-9">
-          {{ object.updated_at }}
-        </div>
+      </div>
+      <div class="col-9">
+        {{ object.updated_at }}
       </div>
     </div>
     <hr>
     <div class="row">
       <div class="col-3">
         <strong>あなたの回答</strong>
-        <div class="col-9">
-          {{ reaction.state }}
-        </div>
+      </div>
+      <div class="col-9">
+        {{ reaction.state }}
       </div>
     </div>
     <hr>
@@ -77,5 +98,413 @@
     <a class="btn btn-secondary mt-5 mb-3" href="{% url 'schedule:reaction_update' reaction.pk %}">出欠編集</a>
     {% endif %}
   </div>
+
+  <div class="accordion" id="accordionExample">
+    <div class="card">
+      <div class="card-header" id="headingOne">
+        <h5 class="mb-0">
+          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            自分のパート
+          </button>
+        </h5>
+      </div>
+  
+      <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div class="card-body">
+          <p>
+            <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">
+              前プロ
+            </a>
+            <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample2" role="button" aria-expanded="false" aria-controls="multiCollapseExample2">
+              中プロ
+            </a>
+            <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample3" role="button" aria-expanded="false" aria-controls="multiCollapseExample3">
+              メイン
+            </a>
+          </p>
+          <div class="col">
+            <div class="col">
+              <div class="collapse multi-collapse" id="multiCollapseExample1">
+                <div class="card card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">パート</th>
+                        <th scope="col">乗り番</th>
+                        <th scope="col">名前</th>
+                        <th scope="col">出欠</th>
+                        <th scope="col">コメント</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for reaction in 1_your_part_reactions %}
+                      <tr>
+                        <td>{{ reaction.short_name }}</td>
+                        <td>
+                          {{ reaction.noriban }}
+                        </td>
+                        <td>{{ reaction.nick_name }}</td>
+                        {% if reaction.syukketu == None %}
+                        <td>未回答</td>
+                        {% else %}
+                        <td>{{ reaction.syukketu }}</td>
+                        {% endif %}
+                        <td>{{ reaction.comment }}</td>
+                      </tr>
+                      {% empty %}
+                        <p>該当者はいません</p>
+                      {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="collapse multi-collapse" id="multiCollapseExample2">
+                <div class="card card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">パート</th>
+                        <th scope="col">乗り番</th>
+                        <th scope="col">名前</th>
+                        <th scope="col">出欠</th>
+                        <th scope="col">コメント</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for reaction in 2_your_part_reactions %}
+                      <tr>
+                        <td>{{ reaction.short_name }}</td>
+                        <td>
+                          {{ reaction.noriban }}
+                        </td>
+                        <td>{{ reaction.nick_name }}</td>
+                        {% if reaction.syukketu == None %}
+                        <td>未回答</td>
+                        {% else %}
+                        <td>{{ reaction.syukketu }}</td>
+                        {% endif %}
+                        <td>{{ reaction.comment }}</td>
+                      </tr>
+                      {% empty %}
+                        <p>該当者はいません</p>
+                      {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="collapse multi-collapse" id="multiCollapseExample3">
+                <div class="card card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">パート</th>
+                        <th scope="col">乗り番</th>
+                        <th scope="col">名前</th>
+                        <th scope="col">出欠</th>
+                        <th scope="col">コメント</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for reaction in 3_your_part_reactions %}
+                      <tr>
+                        <td>{{ reaction.short_name }}</td>
+                        <td>
+                          {{ reaction.noriban }}
+                        </td>
+                        <td>{{ reaction.nick_name }}</td>
+                        {% if reaction.syukketu == None %}
+                        <td>未回答</td>
+                        {% else %}
+                        <td>{{ reaction.syukketu }}</td>
+                        {% endif %}
+                        <td>{{ reaction.comment }}</td>
+                      </tr>
+                      {% empty %}
+                        <p>該当者はいません</p>
+                      {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingTwo">
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            管楽器
+          </button>
+        </h5>
+      </div>
+      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+        <div class="card-body">
+          <p>
+            <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample4" role="button" aria-expanded="false" aria-controls="multiCollapseExample4">
+              前プロ
+            </a>
+            <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample5" role="button" aria-expanded="false" aria-controls="multiCollapseExample5">
+              中プロ
+            </a>
+            <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample6" role="button" aria-expanded="false" aria-controls="multiCollapseExample6">
+              メイン
+            </a>
+          </p>
+          <div class="col">
+            <div class="col">
+              <div class="collapse multi-collapse" id="multiCollapseExample4">
+                <div class="card card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">パート</th>
+                        <th scope="col">乗り番</th>
+                        <th scope="col">名前</th>
+                        <th scope="col">出欠</th>
+                        <th scope="col">コメント</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for reaction in 1_wind_reactions %}
+                      <tr>
+                        <td>{{ reaction.short_name }}</td>
+                        <td>
+                          {{ reaction.noriban }}
+                        </td>
+                        <td>{{ reaction.nick_name }}</td>
+                        {% if reaction.syukketu == None %}
+                        <td>未回答</td>
+                        {% else %}
+                        <td>{{ reaction.syukketu }}</td>
+                        {% endif %}
+                        <td>{{ reaction.comment }}</td>
+                      </tr>
+                      {% empty %}
+                        <p>該当者はいません</p>
+                      {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="collapse multi-collapse" id="multiCollapseExample5">
+                <div class="card card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">パート</th>
+                        <th scope="col">乗り番</th>
+                        <th scope="col">名前</th>
+                        <th scope="col">出欠</th>
+                        <th scope="col">コメント</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for reaction in 2_wind_reactions %}
+                      <tr>
+                        <td>{{ reaction.short_name }}</td>
+                        <td>
+                          {{ reaction.noriban }}
+                        </td>
+                        <td>{{ reaction.nick_name }}</td>
+                        {% if reaction.syukketu == None %}
+                        <td>未回答</td>
+                        {% else %}
+                        <td>{{ reaction.syukketu }}</td>
+                        {% endif %}
+                        <td>{{ reaction.comment }}</td>
+                      </tr>
+                      {% empty %}
+                        <p>該当者はいません</p>
+                      {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="collapse multi-collapse" id="multiCollapseExample6">
+                <div class="card card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">パート</th>
+                        <th scope="col">乗り番</th>
+                        <th scope="col">名前</th>
+                        <th scope="col">出欠</th>
+                        <th scope="col">コメント</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for reaction in 3_string_reactions %}
+                      <tr>
+                        <td>{{ reaction.short_name }}</td>
+                        <td>
+                          {{ reaction.noriban }}
+                        </td>
+                        <td>{{ reaction.nick_name }}</td>
+                        {% if reaction.syukketu == None %}
+                        <td>未回答</td>
+                        {% else %}
+                        <td>{{ reaction.syukketu }}</td>
+                        {% endif %}
+                        <td>{{ reaction.comment }}</td>
+                      </tr>
+                      {% empty %}
+                        <p>該当者はいません</p>
+                      {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingThree">
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+            弦楽器
+          </button>
+        </h5>
+      </div>
+      <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+        <div class="card-body">
+          <p>
+            <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample7" role="button" aria-expanded="false" aria-controls="multiCollapseExample7">
+              前プロ
+            </a>
+            <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample8" role="button" aria-expanded="false" aria-controls="multiCollapseExample8">
+              中プロ
+            </a>
+            <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample9" role="button" aria-expanded="false" aria-controls="multiCollapseExample9">
+              メイン
+            </a>
+          </p>
+          <div class="col">
+            <div class="col">
+              <div class="collapse multi-collapse" id="multiCollapseExample7">
+                <div class="card card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">パート</th>
+                        <th scope="col">乗り番</th>
+                        <th scope="col">名前</th>
+                        <th scope="col">出欠</th>
+                        <th scope="col">コメント</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for reaction in 1_string_reactions %}
+                      <tr>
+                        <td>{{ reaction.short_name }}</td>
+                        <td>
+                          {{ reaction.noriban }}
+                        </td>
+                        <td>{{ reaction.nick_name }}</td>
+                        {% if reaction.syukketu == None %}
+                        <td>未回答</td>
+                        {% else %}
+                        <td>{{ reaction.syukketu }}</td>
+                        {% endif %}
+                        <td>{{ reaction.comment }}</td>
+                      </tr>
+                      {% empty %}
+                        <p>該当者はいません</p>
+                      {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="collapse multi-collapse" id="multiCollapseExample8">
+                <div class="card card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">パート</th>
+                        <th scope="col">乗り番</th>
+                        <th scope="col">名前</th>
+                        <th scope="col">出欠</th>
+                        <th scope="col">コメント</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for reaction in 2_string_reactions %}
+                      <tr>
+                        <td>{{ reaction.short_name }}</td>
+                        <td>
+                          {{ reaction.noriban }}
+                        </td>
+                        <td>{{ reaction.nick_name }}</td>
+                        {% if reaction.syukketu == None %}
+                        <td>未回答</td>
+                        {% else %}
+                        <td>{{ reaction.syukketu }}</td>
+                        {% endif %}
+                        <td>{{ reaction.comment }}</td>
+                      </tr>
+                      {% empty %}
+                        <p>該当者はいません</p>
+                      {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="collapse multi-collapse" id="multiCollapseExample9">
+                <div class="card card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">パート</th>
+                        <th scope="col">乗り番</th>
+                        <th scope="col">名前</th>
+                        <th scope="col">出欠</th>
+                        <th scope="col">コメント</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for reaction in 3_string_reactions %}
+                      <tr>
+                        <td>{{ reaction.short_name }}</td>
+                        <td>
+                          {{ reaction.noriban }}
+                        </td>
+                        <td>{{ reaction.nick_name }}</td>
+                        {% if reaction.syukketu == None %}
+                        <td>未回答</td>
+                        {% else %}
+                        <td>{{ reaction.syukketu }}</td>
+                        {% endif %}
+                        <td>{{ reaction.comment }}</td>
+                      </tr>
+                      {% empty %}
+                        <p>該当者はいません</p>
+                      {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 </div>
 {% endblock %}

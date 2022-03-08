@@ -5,6 +5,7 @@ from . import views
 app_name = 'schedule'
 urlpatterns = [
     path('', views.IndexView.as_view(), name="index"),
+    path('help/', views.HelpView.as_view(), name="help"),
     path('inquiry/', views.InquiryView.as_view(), name="inquiry"),
     path('schedule-list', views.schedule_index, name="schedule_list"),
     path('schedule-detail/<int:pk>/', views.ScheduleDetailView.as_view(), name="schedule_detail"),

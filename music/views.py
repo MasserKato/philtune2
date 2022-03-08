@@ -27,23 +27,27 @@ def music_index(request):
     return render(request, 'music_list.html', context)
 
 
-class MusicListView(LoginRequiredMixin, generic.ListView):
-    model = Music
-    template_name = 'music_list.html'
-    paginate_by = 2
-
-    def get_queryset(self):
-        musics = Music.objects.order_by('-created_at')
-        return musics
-
 
 class MusicDetailView(LoginRequiredMixin, generic.DetailView):
     model = Music
     template_name = 'music_detail.html'
 
     def get_context_data(self, **kwargs):
+        pk = self.kwargs['pk']
         context = super().get_context_data(**kwargs)
-        data_list = Stage.objects.filter(music=self.kwargs['pk'], user=self.request.user).first()
+        string_sql = f'SELECT music_stage.id, state, music_id, user_id, username, nick_name, instrument_id, part.short_name FROM music_stage LEFT JOIN (SELECT id, username, nick_name, instrument_id FROM accounts_customuser) AS customuser ON user_id=customuser.id LEFT JOIN (SELECT * FROM part) AS part ON instrument_id=part.id WHERE string is true AND music_id={pk};'
+        string_stages = Stage.objects.raw(string_sql)
+        context['string_stages'] = string_stages
+
+        wind_sql = f'SELECT music_stage.id, state, music_id, user_id, username, nick_name, instrument_id, part.short_name FROM music_stage LEFT JOIN (SELECT id, username, nick_name, instrument_id FROM accounts_customuser) AS customuser ON user_id=customuser.id LEFT JOIN (SELECT * FROM part) AS part ON instrument_id=part.id WHERE wind is true AND music_id={pk};'
+        wind_stages = Stage.objects.raw(wind_sql)
+        context['wind_stages'] = wind_stages
+
+        your_part_sql = f'SELECT music_stage.id, state, music_id, user_id, username, nick_name, instrument_id, part.short_name FROM music_stage LEFT JOIN (SELECT id, username, nick_name, instrument_id FROM accounts_customuser) AS customuser ON user_id=customuser.id LEFT JOIN (SELECT * FROM part) AS part ON instrument_id=part.id WHERE instrument_id={self.request.user.instrument.id} AND music_id={pk};'
+        your_part_stages = Stage.objects.raw(your_part_sql)
+        context['your_part_stages'] = your_part_stages
+        
+        data_list = Stage.objects.filter(music=pk, user=self.request.user).first()
         context['stage'] = data_list
         return context
 

@@ -4,7 +4,7 @@ from django.db import models
 
 class Part(models.Model):
     class Meta:
-        db_table = 'Part'
+        db_table = 'part'
         verbose_name = verbose_name_plural = 'パート'
     
     name = models.CharField(verbose_name='パート名', max_length=40)

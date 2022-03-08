@@ -47,18 +47,20 @@ class InquiryForm(forms.Form):
 class ScheduleCreateForm(forms.ModelForm):
     class Meta:
         model = Schedule
-        fields = ('title', 'detail', 'location', 'date', 'start_at', 'end_at', 'music')
+        fields = ('title', 'detail', 'location', 'url', 'date', 'start_at', 'end_at', 'music')
         widgets = {
             'date': forms.SelectDateWidget,
             'start_at': forms.TimeInput(format='%H:%M'),
             'end_at': forms.TimeInput(format='%H:%M'),
+            'music': forms.CheckboxSelectMultiple,
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        """
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
-
+"""
 
 class ReactionCreateForm(forms.ModelForm):
     CHOICES = [('出席','出席'),('欠席','欠席'),('遅刻','遅刻'),('早退','早退')]

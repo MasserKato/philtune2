@@ -39,16 +39,28 @@
         <strong>区分</strong>
       </div>
       <div class="col-9">
-        {{ object.category }}
+        {% if music.category == 1 %}
+        前
+        {% elif music.category == 2 %}
+        中
+        {% elif music.category == 3 %}
+        メイン
+        {% elif music.category == 4 %}
+        その他
+        {% endif %}
       </div>
     </div>
     <hr>
     <div class="row">
       <div class="col-3">
         <strong>あなたの乗り番</strong>
-        <div class="col-9">
-          {{ stage.state }}
-        </div>
+      </div>
+      <div class="col-9">
+        {% if stage.state == None %}
+        未登録
+        {% else %}
+        {{ stage.state }}
+        {% endif %}
       </div>
     </div>
     <hr>
@@ -60,5 +72,117 @@
     <a class="btn btn-secondary mt-5 mb-3" href="{% url 'music:stage_update' stage.pk %}">乗り番編集</a>
     {% endif %}
   </div>
+
+
+  <div class="accordion" id="accordionExample">
+    <div class="card">
+      <div class="card-header" id="headingOne">
+        <h5 class="mb-0">
+          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            自分のパート
+          </button>
+        </h5>
+      </div>
+  
+      <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">パート</th>
+                <th scope="col">乗り番</th>
+                <th scope="col">名前</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for stage in your_part_stages %}
+              <tr>
+                <td>{{ stage.short_name }}</td>
+                <td>{{ stage.state }}</td>
+                <td>
+                  {{ stage.nick_name }}
+                </td>
+              </tr>
+              {% empty %}
+                <p>練習予定はありません。</p>
+              {% endfor %}
+            </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingTwo">
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            管楽器
+          </button>
+        </h5>
+      </div>
+      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">パート</th>
+                <th scope="col">乗り番</th>
+                <th scope="col">名前</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for stage in wind_stages %}
+              <tr>
+                <td>{{ stage.short_name }}</td>
+                <td>{{ stage.state }}</td>
+                <td>
+                  {{ stage.nick_name }}
+                </td>
+              </tr>
+              {% empty %}
+                <p>練習予定はありません。</p>
+              {% endfor %}
+            </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingThree">
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+            弦楽器
+          </button>
+        </h5>
+      </div>
+      <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">パート</th>
+                <th scope="col">乗り番</th>
+                <th scope="col">名前</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for stage in string_stages %}
+              <tr>
+                <td>{{ stage.short_name }}</td>
+                <td>{{ stage.state }}</td>
+                <td>
+                  {{ stage.nick_name }}
+                </td>
+              </tr>
+              {% empty %}
+                <p>練習予定はありません。</p>
+              {% endfor %}
+            </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 </div>
 {% endblock %}

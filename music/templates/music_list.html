@@ -11,6 +11,7 @@
         <div class="clearfix">
           <a class="btn btn-primary float-right" href="{% url 'music:music_create' %}">新規登録</a>
         </div>
+        <br>
           <table class="table table-striped">
               <thead>
                 <tr>
@@ -29,11 +30,19 @@
                   <td><a href="{% url 'music:music_detail' music.pk %}">
                     {{ music.title}}
                   </a></td>
-                  <td>{{ music.category }}</td>
-                  {% if stage.state == None %}
+                  {% if music.category == 1 %}
+                  <td>前</td>
+                  {% elif music.category == 2 %}
+                  <td>中</td>
+                  {% elif music.category == 3 %}
+                  <td>メイン</td>
+                  {% elif music.category == 4 %}
+                  <td>その他</td>
+                  {% endif %}
+                  {% if music.state == None %}
                   <td>降り番(未回答)</td>
                   {% else %}
-                  <td>{{ stage.state }}</td>
+                  <td>{{ music.state }}</td>
                   {% endif %}
                 </tr>
                 {% empty %}

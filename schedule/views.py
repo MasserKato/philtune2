@@ -5,6 +5,7 @@ from .forms import InquiryForm, ScheduleCreateForm, ReactionCreateForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Schedule, Reaction
+from music.models import Music
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -15,6 +16,10 @@ logger = logging.getLogger(__name__)
 
 class IndexView(generic.TemplateView):
     template_name = "index.html"
+
+
+class HelpView(generic.TemplateView):
+    template_name = "help.html"
 
 
 class InquiryView(generic.FormView):
@@ -60,7 +65,7 @@ def schedule_index(request):
     user_id = request.user.id
     sql = f'SELECT * FROM schedule_schedule LEFT JOIN (SELECT * FROM schedule_reaction WHERE user_id={user_id}) AS reaction_table ON schedule_schedule.id=reaction_table.schedule_id;'
     schedule = Schedule.objects.raw(sql)
-    page_obj = paginate_queryset(request, schedule, 5)
+    page_obj = paginate_queryset(request, schedule, 10)
     context = {
         'page_obj': page_obj,
     }
@@ -88,9 +93,28 @@ class ScheduleDetailView(LoginRequiredMixin, generic.DetailView):
     template_name = 'schedule_detail.html'
 
     def get_context_data(self, **kwargs):
+        pk = self.kwargs['pk']
         context = super().get_context_data(**kwargs)
+
+        schedule = Schedule.objects.get(id=pk)
+
+        for music in schedule.music.all():
+            sql = f"SELECT reaction.state, reaction.comment, music_stage.id, music_stage.state, username, nick_name, part.short_name FROM music_stage LEFT JOIN accounts_customuser ON user_id=accounts_customuser.id LEFT JOIN part ON instrument_id=part.id LEFT JOIN (SELECT * FROM schedule_reaction WHERE schedule_id={pk}) AS reaction ON reaction.user_id=music_stage.user_id WHERE music_id=1;"
+
+            string_sql = f"SELECT reaction.state AS syukketu, reaction.comment, music_stage.id, music_stage.state AS noriban, username, nick_name, part.short_name FROM music_stage LEFT JOIN accounts_customuser ON user_id=accounts_customuser.id LEFT JOIN part ON instrument_id=part.id LEFT JOIN (SELECT * FROM schedule_reaction WHERE schedule_id={pk}) AS reaction ON reaction.user_id=music_stage.user_id WHERE music_id={music.id} AND string is true;"
+            string_reactions = Reaction.objects.raw(string_sql)
+            context[f'{music.category}_string_reactions'] = string_reactions
+
+            wind_sql = f"SELECT reaction.state AS syukketu, reaction.comment, music_stage.id, music_stage.state AS noriban, username, nick_name, part.short_name FROM music_stage LEFT JOIN accounts_customuser ON user_id=accounts_customuser.id LEFT JOIN part ON instrument_id=part.id LEFT JOIN (SELECT * FROM schedule_reaction WHERE schedule_id={pk}) AS reaction ON reaction.user_id=music_stage.user_id WHERE music_id={music.id} AND wind is true;"
+            wind_reactions = Reaction.objects.raw(wind_sql)
+            context[f'{music.category}_wind_reactions'] = wind_reactions
+
+            your_part_sql = f"SELECT reaction.state AS syukketu, reaction.comment, music_stage.id, music_stage.state AS noriban, username, nick_name, part.short_name FROM music_stage LEFT JOIN accounts_customuser ON user_id=accounts_customuser.id LEFT JOIN part ON instrument_id=part.id LEFT JOIN (SELECT * FROM schedule_reaction WHERE schedule_id={pk}) AS reaction ON reaction.user_id=music_stage.user_id WHERE music_id=1 AND instrument_id={self.request.user.instrument.id};"
+            your_part_reactions = Reaction.objects.raw(your_part_sql)
+            context[f'{music.category}_your_part_reactions'] = your_part_reactions
+        
         data_list = Reaction.objects.filter(schedule=self.kwargs['pk'], user=self.request.user).first()
-        context['reaction'] = data_list
+        context['reaction']=data_list
         return context
 
 

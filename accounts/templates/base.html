@@ -16,7 +16,7 @@
   <body>
     <!-- 以下ナビバー -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">PhilTune</a>
+      <a class="navbar-brand" href="{% url 'schedule:schedule_list' %}">PhilTune</a>
       <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navber" aria-controls="Navber" aria-expanded="false" aria-label="ナビゲーションの切替">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -28,8 +28,8 @@
           <li class="nav-item {% block schedule_active %}{% endblock %}">
             <a class="nav-link" href="{% url 'schedule:schedule_list' %}">練習</a>
           </li>
-          <li class="nav-item {% block stage_active %}{% endblock %}">
-            <a class="nav-link" href="#">乗り番</a>
+          <li class="nav-item {% block music_active %}{% endblock %}">
+            <a class="nav-link" href="{% url 'music:music_list' %}">乗り番</a>
           </li>
           <li class="nav-item dropdown {% block user_active %}{% endblock %}">
             <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -38,8 +38,7 @@
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="{% url 'accounts:user_detail' user.id %}">マイプロフィール</a>
               <a class="dropdown-item" href="{% url 'accounts:user_update' user.id %}">基本設定</a>
-              <a class="dropdown-item" href="#">アイコン設定</a>
-              <a class="dropdown-item" href="#">パスワード変更</a>
+              <a class="dropdown-item" href="#">アイコン設定(開発中)</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="{% url 'account_logout' %}">ログアウト</a>
             </div>
