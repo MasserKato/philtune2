@@ -160,5 +160,5 @@ MESSAGE_TAGS = {
     messages.SUCCESS: 'alert alert-success',
     messages.INFO: 'alert alert-info',
 }
-
+DEFAULT_FROM_EMAIL = 'mkato.horn@icloud.com'
 # ここから開発用なので本番はコメントアウト
