@@ -161,4 +161,4 @@ MESSAGE_TAGS = {
     messages.INFO: 'alert alert-info',
 }
 DEFAULT_FROM_EMAIL = 'mkato.horn@icloud.com'
-# ここから開発用なので本番はコメントアウト
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'

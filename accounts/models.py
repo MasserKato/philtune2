@@ -27,4 +27,4 @@ class CustomUser(AbstractUser):
         verbose_name_plural = 'CustomUser'
 
     def __str__(self):
-        return self.nick_name
+        return self.username
