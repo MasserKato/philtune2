@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from .forms import MusicCreateForm, StageCreateForm
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Music, Stage
 from schedule.views import paginate_queryset
 from django.contrib.auth.decorators import login_required
@@ -52,11 +52,15 @@ class MusicDetailView(LoginRequiredMixin, generic.DetailView):
         return context
 
 
-class MusicCreateView(LoginRequiredMixin, generic.CreateView):
+class MusicCreateView(LoginRequiredMixin, UserPassesTestMixin, generic.CreateView):
     model = Music
     template_name = 'music_create.html'
     form_class = MusicCreateForm
     success_url = reverse_lazy('music:music_list')
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff
 
     def form_valid(self, form):
         music = form.save(commit=False)
@@ -70,10 +74,14 @@ class MusicCreateView(LoginRequiredMixin, generic.CreateView):
         return super().form_invalid(form)
 
 
-class MusicUpdateView(LoginRequiredMixin, generic.UpdateView):
+class MusicUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
     model = Music
     template_name = 'music_update.html'
     form_class = MusicCreateForm
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff
 
     def get_success_url(self):
         return reverse_lazy('music:music_detail', kwargs={'pk': self.kwargs['pk']})
@@ -87,10 +95,14 @@ class MusicUpdateView(LoginRequiredMixin, generic.UpdateView):
         return super().form_invalid(form)
 
 
-class MusicDeleteView(LoginRequiredMixin, generic.DeleteView):
+class MusicDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
     model = Music
     template_name = 'Music_delete.html'
     success_url = reverse_lazy('music:music_list')
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "曲を削除しました。")
@@ -141,3 +153,16 @@ class StageUpdateView(LoginRequiredMixin, generic.UpdateView):
     def form_invalid(self, form):
         messages.error(self.request, '回答の更新に失敗しました。')
         return super().form_invalid(form)
+
+
+class StageDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Stage
+    template_name = 'stage_delete.html'
+
+    def get_success_url(self):
+        r_id = self.kwargs['pk']
+        return reverse_lazy('music:music_detail', kwargs={'pk': Stage.objects.get(id=r_id).music_id})
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "降り番になりました。")
+        return super().delete(request, *args, **kwargs)

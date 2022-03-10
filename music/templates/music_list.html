@@ -9,7 +9,7 @@
     <div class="my-div-style w-100">
       <div class="col-lg-8 col-md-10 mx-auto">
         <div class="clearfix">
-          <a class="btn btn-primary float-right" href="{% url 'music:music_create' %}">新規登録</a>
+          {% if request.user.is_staff %}<a class="btn btn-primary float-right" href="{% url 'music:music_create' %}">新規登録</a>{% endif %}
         </div>
         <br>
           <table class="table table-striped">
@@ -40,7 +40,7 @@
                   <td>その他</td>
                   {% endif %}
                   {% if music.state == None %}
-                  <td>降り番(未回答)</td>
+                  <td><a href="{% url 'music:stage_create' music.pk %}">降り番(未回答)</a></td>
                   {% else %}
                   <td>{{ music.state }}</td>
                   {% endif %}
