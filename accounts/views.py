@@ -18,7 +18,7 @@ class OnlyYouMixin(UserPassesTestMixin):
         return user.pk == self.kwargs['pk'] or user.is_superuser
 
 
-class UserDetailView(LoginRequiredMixin, generic.DetailView):
+class UserDetailView(LoginRequiredMixin, OnlyYouMixin, generic.DetailView):
     model = CustomUser
     template_name = 'user_detail.html'
 

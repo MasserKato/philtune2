@@ -20,6 +20,8 @@ class MusicListView(LoginRequiredMixin, generic.ListView):
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
+        if self.request.user.instrument is None:
+            messages.warning(self.request, 'パートが登録されていません！！マイページからパートを登録してください。')
         user_id = self.request.user.id
         context = super(MusicListView, self).get_context_data(**kwargs)
         sql = f'SELECT * FROM music LEFT JOIN (SELECT * FROM music_stage WHERE user_id={user_id}) AS stage_table ON music.id=stage_table.music_id WHERE end_date >= current_date;'
@@ -33,9 +35,15 @@ class MusicListView(LoginRequiredMixin, generic.ListView):
         return context
 
 
-class MusicDetailView(LoginRequiredMixin, generic.DetailView):
+class MusicDetailView(LoginRequiredMixin, UserPassesTestMixin, generic.DetailView):
     model = Music
     template_name = 'music_detail.html'
+
+    def test_func(self):
+        if self.request.user.instrument is None:
+            return False
+        else:
+            return True
 
     def get_context_data(self, **kwargs):
         pk = self.kwargs['pk']

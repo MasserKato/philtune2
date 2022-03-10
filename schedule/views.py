@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Schedule, Reaction
 from music.models import Music
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.timezone import now
 
@@ -70,6 +70,8 @@ class ScheduleListView(LoginRequiredMixin, generic.ListView):
         return schedules
 
     def get_context_data(self, **kwargs):
+        if self.request.user.instrument is None:
+            messages.warning(self.request, 'パートが登録されていません！！マイページからパートを登録してください。')
         user_id = self.request.user.id
         context = super(ScheduleListView, self).get_context_data(**kwargs)
         sql = f'SELECT * FROM schedule_schedule LEFT JOIN (SELECT * FROM schedule_reaction WHERE user_id={user_id}) AS reaction_table ON schedule_schedule.id=reaction_table.schedule_id WHERE date >= current_date;'
@@ -84,9 +86,16 @@ class ScheduleListView(LoginRequiredMixin, generic.ListView):
 
 
 
-class ScheduleDetailView(LoginRequiredMixin, generic.DetailView):
+class ScheduleDetailView(LoginRequiredMixin, UserPassesTestMixin, generic.DetailView):
     model = Schedule
     template_name = 'schedule_detail.html'
+
+    def test_func(self):
+        print(self.request.user.instrument)
+        if self.request.user.instrument is None:
+            return False
+        else:
+            return True
 
     def get_context_data(self, **kwargs):
         pk = self.kwargs['pk']
