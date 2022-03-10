@@ -60,32 +60,28 @@ def paginate_queryset(request, queryset, count):
     return page_obj
 
 
-@login_required
-def schedule_index(request):
-    user_id = request.user.id
-    sql = f'SELECT * FROM schedule_schedule LEFT JOIN (SELECT * FROM schedule_reaction WHERE user_id={user_id}) AS reaction_table ON schedule_schedule.id=reaction_table.schedule_id;'
-    schedule = Schedule.objects.raw(sql)
-    page_obj = paginate_queryset(request, schedule, 10)
-    context = {
-        'page_obj': page_obj,
-    }
-    return render(request, 'schedule_list.html', context)
-
-
 class ScheduleListView(LoginRequiredMixin, generic.ListView):
     model = Schedule
     template_name = 'schedule_list.html'
-    paginate_by = 2
+    paginate_by = 10
 
     def get_queryset(self):
         schedules = Schedule.objects.order_by('-created_at')
         return schedules
-"""
+
     def get_context_data(self, **kwargs):
+        user_id = self.request.user.id
         context = super(ScheduleListView, self).get_context_data(**kwargs)
-        context['reaction'] = Reaction.objects.get(user=self.request.user)
+        sql = f'SELECT * FROM schedule_schedule LEFT JOIN (SELECT * FROM schedule_reaction WHERE user_id={user_id}) AS reaction_table ON schedule_schedule.id=reaction_table.schedule_id WHERE date >= current_date;'
+        past_sql = f'SELECT * FROM schedule_schedule LEFT JOIN (SELECT * FROM schedule_reaction WHERE user_id={user_id}) AS reaction_table ON schedule_schedule.id=reaction_table.schedule_id WHERE date < current_date;'
+        schedule = Schedule.objects.raw(sql)
+        past_schedule = Schedule.objects.raw(past_sql)
+        page_obj = paginate_queryset(self.request, schedule, 10)
+        past_obj = paginate_queryset(self.request, past_schedule, 10)
+        context['page_obj'] = page_obj
+        context['past_obj'] = past_obj
         return context
-"""
+
 
 
 class ScheduleDetailView(LoginRequiredMixin, generic.DetailView):

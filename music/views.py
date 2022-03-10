@@ -14,18 +14,23 @@ from django.utils.timezone import now
 logger = logging.getLogger(__name__)
 
 
+class MusicListView(LoginRequiredMixin, generic.ListView):
+    model = Music
+    template_name = 'music_list.html'
+    paginate_by = 10
 
-@login_required
-def music_index(request):
-    user_id = request.user.id
-    sql = f'SELECT * FROM music LEFT JOIN (SELECT * FROM music_stage WHERE user_id={user_id}) AS stage_table ON music.id=stage_table.music_id;'
-    music = Music.objects.raw(sql)
-    page_obj = paginate_queryset(request, music, 5)
-    context = {
-        'page_obj': page_obj,
-    }
-    return render(request, 'music_list.html', context)
-
+    def get_context_data(self, **kwargs):
+        user_id = self.request.user.id
+        context = super(MusicListView, self).get_context_data(**kwargs)
+        sql = f'SELECT * FROM music LEFT JOIN (SELECT * FROM music_stage WHERE user_id={user_id}) AS stage_table ON music.id=stage_table.music_id WHERE end_date >= current_date;'
+        past_sql = f'SELECT * FROM music LEFT JOIN (SELECT * FROM music_stage WHERE user_id={user_id}) AS stage_table ON music.id=stage_table.music_id WHERE end_date < current_date;'
+        music = Music.objects.raw(sql)
+        past_music = Music.objects.raw(past_sql)
+        page_obj = paginate_queryset(self.request, music, 10)
+        past_obj = paginate_queryset(self.request, past_music, 10)
+        context['page_obj'] = page_obj
+        context['past_obj'] = past_obj
+        return context
 
 
 class MusicDetailView(LoginRequiredMixin, generic.DetailView):
@@ -39,7 +44,7 @@ class MusicDetailView(LoginRequiredMixin, generic.DetailView):
         string_stages = Stage.objects.raw(string_sql)
         context['string_stages'] = string_stages
 
-        wind_sql = f'SELECT music_stage.id, state, music_id, user_id, username, nick_name, instrument_id, part.short_name FROM music_stage LEFT JOIN (SELECT id, username, nick_name, instrument_id FROM accounts_customuser) AS customuser ON user_id=customuser.id LEFT JOIN (SELECT * FROM part) AS part ON instrument_id=part.id WHERE wind is true AND music_id={pk};'
+        wind_sql = f'SELECT music_stage.id, state, music_id, user_id, username, nick_name, instrument_id, part.short_name FROM music_stage LEFT JOIN (SELECT id, username, nick_name, instrument_id FROM accounts_customuser) AS customuser ON user_id=customuser.id LEFT JOIN (SELECT * FROM part) AS part ON instrument_id=part.id WHERE string is false AND music_id={pk};'
         wind_stages = Stage.objects.raw(wind_sql)
         context['wind_stages'] = wind_stages
 

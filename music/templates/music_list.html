@@ -9,6 +9,7 @@
     <div class="my-div-style w-100">
       <div class="col-lg-8 col-md-10 mx-auto">
         <div class="clearfix">
+          <h4 class="display-6 float-left">練習する曲一覧</h6>
           {% if request.user.is_staff %}<a class="btn btn-primary float-right" href="{% url 'music:music_create' %}">新規登録</a>{% endif %}
         </div>
         <br>
@@ -83,6 +84,87 @@
               {% endif %}
 
       </div>
+      <hr>
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <p>
+          <a class="btn btn-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+            過去の曲
+          </a>
+        </p>
+        <div class="collapse" id="collapseExample">
+          <div class="card card-body">
+            <h4 class="display-6">過去の曲</h4>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">練習開始日</th>
+                  <th scope="col">練習終了日</th>
+                  <th scope="col">曲名</th>
+                  <th scope="col">区分</th>
+                  <th scope="col">回答</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for music in past_obj %}
+                <tr>
+                  <td>{{ music.start_date}}</td>
+                  <td>{{ music.end_date}}</td>
+                  <td><a href="{% url 'music:music_detail' music.pk %}">
+                    {{ music.title}}
+                  </a></td>
+                  {% if music.category == 1 %}
+                  <td>前</td>
+                  {% elif music.category == 2 %}
+                  <td>中</td>
+                  {% elif music.category == 3 %}
+                  <td>メイン</td>
+                  {% elif music.category == 4 %}
+                  <td>その他</td>
+                  {% endif %}
+                  {% if music.state == None %}
+                  <td><a href="{% url 'music:stage_create' music.pk %}">降り番(未回答)</a></td>
+                  {% else %}
+                  <td>{{ music.state }}</td>
+                  {% endif %}
+                </tr>
+                {% empty %}
+                  <p>登録された曲はありません。</p>
+                {% endfor %}
+              </tbody>
+          </table>
+                  {% if past_obj.has_previous or past_obj.has_next %}
+                    <ul class="pagination">
+
+                        {% if past_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+
+                        {% for page_num in past_obj.paginator.page_range %}
+                            {% if past_obj.number == page_num %}
+                                <li class="page-item active"><a class="page-link" href="#">{{ page_num }}</a></li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+
+                        {% if past_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+
+                  {% endif %}
+              </div>
+            </div>
     </div>
   </div>
 </div>
