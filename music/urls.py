@@ -11,4 +11,5 @@ urlpatterns = [
     path('music-delete/<int:pk>/', views.MusicDeleteView.as_view(), name="music_delete"),
     path('stage-create/<int:pk>/', views.StageCreateView.as_view(), name="stage_create"),
     path('stage-update/<int:pk>/', views.StageUpdateView.as_view(), name="stage_update"),
+    path('stage-delete/<int:pk>/', views.StageDeleteView.as_view(), name="stage_delete")
 ]

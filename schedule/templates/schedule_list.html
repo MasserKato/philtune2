@@ -9,14 +9,14 @@
     <div class="my-div-style w-100">
       <div class="col-lg-8 col-md-10 mx-auto">
         <div class="clearfix">
-          <a class="btn btn-primary float-right" href="{% url 'schedule:schedule_create' %}">新規作成</a>
+          {% if request.user.is_staff %}<a class="btn btn-primary float-right" href="{% url 'schedule:schedule_create' %}">新規作成</a>{% endif %}
         </div>
         <br>
           <table class="table table-striped">
               <thead>
                 <tr>
-                  <th scope="col">開始日時</th>
                   <th scope="col">練習名</th>
+                  <th scope="col">開始日時</th>
                   <th scope="col">場所</th>
                   <th scope="col">回答</th>
                 </tr>
@@ -24,13 +24,13 @@
               <tbody>
                 {% for schedule in page_obj %}
                 <tr>
-                  <td>{{ schedule.date}}</td>
                   <td><a href="{% url 'schedule:schedule_detail' schedule.pk %}">
                     {{ schedule.title}}
                   </a></td>
-                  <td>{{ schedule.location }}</td>
+                  <td>{{ schedule.date}}　{{ schedule.start_at }}~{{ schedule.end_at }}</td>
+                  <td><a href="{{ schedule.url }}">{{ schedule.location }}</a></td>
                   {% if schedule.state == None %}
-                  <td>未回答</td>
+                  <td><a href="{% url 'schedule:reaction_create' schedule.pk %}">未回答</a></td>
                   {% else %}
                   <td>{{ schedule.state }}</td>
                   {% endif %}

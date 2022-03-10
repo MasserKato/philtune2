@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from .forms import InquiryForm, ScheduleCreateForm, ReactionCreateForm
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Schedule, Reaction
 from music.models import Music
 from django.contrib.auth.decorators import login_required
@@ -118,11 +118,15 @@ class ScheduleDetailView(LoginRequiredMixin, generic.DetailView):
         return context
 
 
-class ScheduleCreateView(LoginRequiredMixin, generic.CreateView):
+class ScheduleCreateView(LoginRequiredMixin, UserPassesTestMixin, generic.CreateView):
     model = Schedule
     template_name = 'schedule_create.html'
     form_class = ScheduleCreateForm
     success_url = reverse_lazy('schedule:schedule_list')
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff
 
     def form_valid(self, form):
         schedule = form.save(commit=False)
@@ -136,10 +140,14 @@ class ScheduleCreateView(LoginRequiredMixin, generic.CreateView):
         return super().form_invalid(form)
 
 
-class ScheduleUpdateView(LoginRequiredMixin, generic.UpdateView):
+class ScheduleUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
     model = Schedule
     template_name = 'schedule_update.html'
     form_class = ScheduleCreateForm
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff
 
     def get_success_url(self):
         return reverse_lazy('schedule:schedule_detail', kwargs={'pk': self.kwargs['pk']})
@@ -153,10 +161,14 @@ class ScheduleUpdateView(LoginRequiredMixin, generic.UpdateView):
         return super().form_invalid(form)
 
 
-class ScheduleDeleteView(LoginRequiredMixin, generic.DeleteView):
+class ScheduleDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
     model = Schedule
     template_name = 'schedule_delete.html'
     success_url = reverse_lazy('schedule:schedule_list')
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "練習予定を削除しました。")
