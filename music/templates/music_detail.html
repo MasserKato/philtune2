@@ -6,6 +6,10 @@
 {% block contents %}
 <div class="container">
   <div class="my-div-style w-100">
+    {% if request.user.is_staff %}
+    <a class="btn btn-success mt-5 mb-3" href="{% url 'music:music_update' object.pk %}">編集</a>
+    <a class="btn btn-danger mt-5 mb-3" href="{% url 'music:music_delete' object.pk %}">削除</a>
+    {% endif %}
     <div class="row">
       <div class="col-3">
         <strong>曲名</strong>
@@ -57,19 +61,19 @@
       </div>
       <div class="col-9">
         {% if stage.state == None %}
-        未登録
+        降り番
         {% else %}
         {{ stage.state }}
         {% endif %}
       </div>
     </div>
     <hr>
-    <a class="btn btn-success mt-5 mb-3" href="{% url 'music:music_update' object.pk %}">編集</a>
-    <a class="btn btn-danger mt-5 mb-3" href="{% url 'music:music_delete' object.pk %}">削除</a>
-    {% if reaction.state == None %}
+    
+    {% if stage.state == None %}
     <a class="btn btn-primary mt-5 mb-3" href="{% url 'music:stage_create' object.pk %}">乗り番送信</a>
     {% else %}
     <a class="btn btn-secondary mt-5 mb-3" href="{% url 'music:stage_update' stage.pk %}">乗り番編集</a>
+    <a class="btn btn-danger mt-5 mb-3" href="{% url 'music:stage_delete' stage.pk %}">降り番にする</a>
     {% endif %}
   </div>
 
@@ -104,7 +108,7 @@
                 </td>
               </tr>
               {% empty %}
-                <p>練習予定はありません。</p>
+                <p>乗り番登録した人はいません</p>
               {% endfor %}
             </tbody>
         </table>
@@ -139,7 +143,7 @@
                 </td>
               </tr>
               {% empty %}
-                <p>練習予定はありません。</p>
+                <p>乗り番登録した人はいません</p>
               {% endfor %}
             </tbody>
         </table>
@@ -174,7 +178,7 @@
                 </td>
               </tr>
               {% empty %}
-                <p>練習予定はありません。</p>
+                <p>乗り番登録した人はいません</p>
               {% endfor %}
             </tbody>
         </table>
