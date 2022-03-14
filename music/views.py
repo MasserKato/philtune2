@@ -26,32 +26,43 @@ class MusicListView(LoginRequiredMixin, generic.ListView):
         context = super(MusicListView, self).get_context_data(**kwargs)
 
         this_term = Term.objects.filter(end_date__gte=datetime.date.today()).order_by("end_date").first()
-        next_term = Term.objects.filter(end_date__gt=this_term.end_date).order_by("end_date").first()
+        if not this_term:
+            next_term = None
+        else:
+            next_term = Term.objects.filter(end_date__gt=this_term.end_date).order_by("end_date").first()
         terms = Term.objects.order_by("-end_date")
 
         this_term_concerts = Concert.objects.filter(term=this_term)
         next_term_concerts = Concert.objects.filter(term=next_term)
+        if not this_term:
+            context['this_term'] = None
+            context['this_term_concerts'] = None
+            context['this_term_musics'] = None
+        else:
+            this_term_id = this_term.id
+            this_sql = (f'SELECT * FROM music '
+                    f'LEFT JOIN (SELECT * FROM music_stage WHERE user_id={user_id}) AS stage_table '
+                    f'ON music.id=stage_table.music_id '
+                    f'WHERE music.term_id={this_term_id};')
+            this_term_musics = Music.objects.raw(this_sql)
+            context['this_term'] = this_term
+            context['this_term_concerts'] = this_term_concerts
+            context['this_term_musics'] = this_term_musics
 
-        this_term_id = this_term.id
-        this_sql = (f'SELECT * FROM music '
-                f'LEFT JOIN (SELECT * FROM music_stage WHERE user_id={user_id}) AS stage_table '
-                f'ON music.id=stage_table.music_id '
-                f'WHERE music.term_id={this_term_id};')
-        this_term_musics = Music.objects.raw(this_sql)
-
-        next_term_id = next_term.id
-        next_sql = (f'SELECT * FROM music '
-                f'LEFT JOIN (SELECT * FROM music_stage WHERE user_id={user_id}) AS stage_table '
-                f'ON music.id=stage_table.music_id '
-                f'WHERE music.term_id={next_term_id};')
-        next_term_musics = Music.objects.raw(next_sql)
-
-        context['this_term'] = this_term
-        context['this_term_concerts'] = this_term_concerts
-        context['this_term_musics'] = this_term_musics
-        context['next_term'] = next_term
-        context['next_term_concerts'] = next_term_concerts
-        context['next_term_musics'] = next_term_musics
+        if not next_term:
+            context['next_term'] = None
+            context['next_term_concerts'] = None
+            context['next_term_musics'] = None
+        else:
+            next_term_id = next_term.id
+            next_sql = (f'SELECT * FROM music '
+                    f'LEFT JOIN (SELECT * FROM music_stage WHERE user_id={user_id}) AS stage_table '
+                    f'ON music.id=stage_table.music_id '
+                    f'WHERE music.term_id={next_term_id};')
+            next_term_musics = Music.objects.raw(next_sql)
+            context['next_term'] = next_term
+            context['next_term_concerts'] = next_term_concerts
+            context['next_term_musics'] = next_term_musics
         context['terms'] = paginate_queryset(self.request, terms, 10)
         return context
 

@@ -14,12 +14,15 @@
             <a class="btn btn-info float-right" href="{% url 'music:term_create' %}">期の追加</a>
           {% endif %}
         </div><br>
-        {% if request.user.is_staff %}
-            <a class="btn btn-primary float-right" href="{% url 'music:concert_create' this_term.id %}">本番を追加</a>
-            <p>　</p><a class="btn btn-primary float-right" href="{% url 'music:music_create' this_term.id %}">曲を追加</a>
-        {% endif %}
+        {% if this_term.title is None %}
+        <h3>今期(運営の登録をお待ちください)</h3>
+        {% else %}
+          {% if request.user.is_staff %}
+              <a class="btn btn-primary float-right" href="{% url 'music:concert_create' this_term.id %}">本番を追加</a>
+              <p>　</p><a class="btn btn-primary float-right" href="{% url 'music:music_create' this_term.id %}">曲を追加</a>
+          {% endif %}
         <h3>
-          今期({% if this_term.title is None %}運営の登録をお待ちください){% else %}{{ this_term.title }}){% endif %}
+          今期({{ this_term.title }})
         </h3>
         <h5>本番一覧</h5>
         <table class="table table-secondary">
@@ -85,8 +88,11 @@
             {% endfor %}
           </tbody>
         </table>
-          
+          {% endif %}
         <hr>
+        {% if next_term.title is None %}
+        <h3>来期(運営が登録するのをお待ちください)</h3>
+        {% else %}
         <h3>来期({{ next_term.title }})</h3>
         {% if request.user.is_staff %}
             <a class="btn btn-primary float-right" href="{% url 'music:concert_create' next_term.id %}">本番を追加</a>
@@ -148,6 +154,7 @@
             {% endfor %}
           </tbody>
         </table>
+        {% endif %}
         <h3>全ての練習期間</h3>
         <table class="table table-striped">
           <thead>

@@ -10,7 +10,7 @@
         {% csrf_token %}
         <p>本当に削除しますか？</p>
         <button class="btn btn-danger mt-5 ml-2" type="submit"><i class="fa-solid fa-trash-can"></i></button>
-        <a class="btn btn-secondary mt-5 ml-2" href="{% url 'schedule:schedule_detail' object.pk %}"><i class="fa-solid fa-xmark"></a>
+        <a class="btn btn-secondary mt-5 ml-2" href="{% url 'schedule:schedule_detail' object.pk %}"><i class="fa-solid fa-xmark"></i></a>
       </form>
     </div>
   </div>
