@@ -8,164 +8,173 @@
   <div class="row">
     <div class="my-div-style w-100">
       <div class="col-lg-8 col-md-10 mx-auto">
+        <h2 class="display-4">乗り番</h2>
         <div class="clearfix">
-          <h4 class="display-6 float-left">練習する曲一覧</h6>
-          {% if request.user.is_staff %}<a class="btn btn-primary float-right" href="{% url 'music:music_create' %}">新規登録</a>{% endif %}
-        </div>
-        <br>
-          <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col">練習開始日</th>
-                  <th scope="col">練習終了日</th>
-                  <th scope="col">曲名</th>
-                  <th scope="col">区分</th>
-                  <th scope="col">回答</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for music in page_obj %}
-                <tr>
-                  <td>{{ music.start_date}}</td>
-                  <td>{{ music.end_date}}</td>
-                  <td><a href="{% url 'music:music_detail' music.pk %}">
-                    {{ music.title}}
-                  </a></td>
-                  {% if music.category == 1 %}
-                  <td>前</td>
-                  {% elif music.category == 2 %}
-                  <td>中</td>
-                  {% elif music.category == 3 %}
-                  <td>メイン</td>
-                  {% elif music.category == 4 %}
-                  <td>その他</td>
-                  {% endif %}
-                  {% if music.state == None %}
-                  <td><a href="{% url 'music:stage_create' music.pk %}">降り番(未回答)</a></td>
-                  {% else %}
-                  <td>{{ music.state }}</td>
-                  {% endif %}
-                </tr>
-                {% empty %}
-                  <p>登録された曲はありません。</p>
-                {% endfor %}
-              </tbody>
-          </table>
-              {% if page_obj.has_previous or page_obj.has_next %}
-                <ul class="pagination">
-
-                    {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                    {% endif %}
-
-
-                    {% for page_num in page_obj.paginator.page_range %}
-                        {% if page_obj.number == page_num %}
-                            <li class="page-item active"><a class="page-link" href="#">{{ page_num }}</a></li>
-                        {% else %}
-                            <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
-                        {% endif %}
-                    {% endfor %}
-
-
-                    {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
-
+          {% if request.user.is_staff %}
+            <a class="btn btn-info float-right" href="{% url 'music:term_create' %}">期の追加</a>
+          {% endif %}
+        </div><br>
+        {% if request.user.is_staff %}
+            <a class="btn btn-primary float-right" href="{% url 'music:concert_create' this_term.id %}">本番を追加</a>
+            <p>　</p><a class="btn btn-primary float-right" href="{% url 'music:music_create' this_term.id %}">曲を追加</a>
+        {% endif %}
+        <h3>
+          今期({% if this_term.title is None %}運営の登録をお待ちください){% else %}{{ this_term.title }}){% endif %}
+        </h3>
+        <h5>本番一覧</h5>
+        <table class="table table-secondary">
+          <thead>
+            <tr>
+              <th scope="col">演奏会名</th>
+              <th scope="col">日程</th>
+              <th scope="col">ホール</th>
+              {% if request.user.is_staff %}
+              <th scope="col">編集</th>
+              <th scope="col">削除</th>
               {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for concert in this_term_concerts %}
+            <tr>
+              <td>{{ concert.title}}</td>
+              <td>{{ concert.date }}</td>
+              <td>{{ concert.hall }}</td>
+              {% if request.user.is_staff %}
+              <td><a href="{% url 'music:concert_update' concert.pk%}">編集</a></td>
+              <td><a href="{% url 'music:concert_delete' concert.pk%}">削除</a></td>
+              {% endif %}
+            </tr>
+            {% empty %}
+              <p>予定された本番はありません。</p>
+            {% endfor %}
+          </tbody>
+        </table>
+        <h5>曲一覧</h5>
+        <table class="table table-secondary">
+          <thead>
+            <tr>
+              <th scope="col">曲名</th>
+              <th scope="col">区分</th>
+              <th scope="col">回答</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for music in this_term_musics %}
+            <tr>
+              <td><a href="{% url 'music:music_detail' music.pk %}">
+                {{ music.title}}
+              </a></td>
+              {% if music.category == 1 %}
+              <td>前</td>
+              {% elif music.category == 2 %}
+              <td>中</td>
+              {% elif music.category == 3 %}
+              <td>メイン</td>
+              {% elif music.category == 4 %}
+              <td>その他</td>
+              {% endif %}
+              {% if music.state == None %}
+              <td><a href="{% url 'music:stage_create' music.pk %}">降り番(未回答)</a></td>
+              {% else %}
+              <td>{{ music.state }}</td>
+              {% endif %}
+            </tr>
+            {% empty %}
+              <p>登録された曲はありません。</p>
+            {% endfor %}
+          </tbody>
+        </table>
+          
+        <hr>
+        <h3>来期({{ next_term.title }})</h3>
+        {% if request.user.is_staff %}
+            <a class="btn btn-primary float-right" href="{% url 'music:concert_create' next_term.id %}">本番を追加</a>
+            <p>　</p><a class="btn btn-primary float-right" href="{% url 'music:music_create' next_term.id %}">曲を追加</a>
+        {% endif %}
+        <h5>本番一覧</h5>
+        <table class="table table-secondary">
+          <thead>
+            <tr>
+              <th scope="col">演奏会名</th>
+              <th scope="col">日程</th>
+              <th scope="col">ホール</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for concert in next_term_concerts %}
+            <tr>
+              <td>{{ concert.title}}</td>
+              <td>{{ concert.date }}</td>
+              <td>{{ concert.hall }}</td>
+            </tr>
+            {% empty %}
+              <p>予定された本番はありません。</p>
+            {% endfor %}
+          </tbody>
+        </table>
+        <h5>曲一覧</h5>
+        <table class="table table-secondary">
+          <thead>
+            <tr>
+              <th scope="col">曲名</th>
+              <th scope="col">区分</th>
+              <th scope="col">回答</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for music in next_term_musics %}
+            <tr>
+              <td><a href="{% url 'music:music_detail' music.pk %}">
+                {{ music.title}}
+              </a></td>
+              {% if music.category == 1 %}
+              <td>前</td>
+              {% elif music.category == 2 %}
+              <td>中</td>
+              {% elif music.category == 3 %}
+              <td>メイン</td>
+              {% elif music.category == 4 %}
+              <td>その他</td>
+              {% endif %}
+              {% if music.state == None %}
+              <td><a href="{% url 'music:stage_create' music.pk %}">降り番(未回答)</a></td>
+              {% else %}
+              <td>{{ music.state }}</td>
+              {% endif %}
+            </tr>
+            {% empty %}
+              <p>登録された曲はありません。</p>
+            {% endfor %}
+          </tbody>
+        </table>
+        <h3>全ての練習期間</h3>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">期の名前</th>
+              <th scope="col"></th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for term in terms %}
+            <tr>
+              <td>{{ term.title}}</td>
+              <td><a href="{% url 'music:term_update' term.pk %}">編集</a></td>
+              <td><a href="{% url 'music:term_delete' term.pk %}">削除</a></td>
+            </tr>
+            {% empty %}
+              <p>登録された練習期間はありません。</p>
+            {% endfor %}
+          </tbody>
+        </table>
+        <hr>
+        
 
       </div>
       <hr>
-      <div class="col-lg-8 col-md-10 mx-auto">
-        <p>
-          <a class="btn btn-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-            過去の曲
-          </a>
-        </p>
-        <div class="collapse" id="collapseExample">
-          <div class="card card-body">
-            <h4 class="display-6">過去の曲</h4>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col">練習開始日</th>
-                  <th scope="col">練習終了日</th>
-                  <th scope="col">曲名</th>
-                  <th scope="col">区分</th>
-                  <th scope="col">回答</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for music in past_obj %}
-                <tr>
-                  <td>{{ music.start_date}}</td>
-                  <td>{{ music.end_date}}</td>
-                  <td><a href="{% url 'music:music_detail' music.pk %}">
-                    {{ music.title}}
-                  </a></td>
-                  {% if music.category == 1 %}
-                  <td>前</td>
-                  {% elif music.category == 2 %}
-                  <td>中</td>
-                  {% elif music.category == 3 %}
-                  <td>メイン</td>
-                  {% elif music.category == 4 %}
-                  <td>その他</td>
-                  {% endif %}
-                  {% if music.state == None %}
-                  <td><a href="{% url 'music:stage_create' music.pk %}">降り番(未回答)</a></td>
-                  {% else %}
-                  <td>{{ music.state }}</td>
-                  {% endif %}
-                </tr>
-                {% empty %}
-                  <p>登録された曲はありません。</p>
-                {% endfor %}
-              </tbody>
-          </table>
-                  {% if past_obj.has_previous or past_obj.has_next %}
-                    <ul class="pagination">
-
-                        {% if past_obj.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                        {% endif %}
-
-
-                        {% for page_num in past_obj.paginator.page_range %}
-                            {% if past_obj.number == page_num %}
-                                <li class="page-item active"><a class="page-link" href="#">{{ page_num }}</a></li>
-                            {% else %}
-                                <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
-                            {% endif %}
-                        {% endfor %}
-
-
-                        {% if past_obj.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                    </ul>
-
-                  {% endif %}
-              </div>
-            </div>
-    </div>
+      
   </div>
 </div>
 {% endblock %}

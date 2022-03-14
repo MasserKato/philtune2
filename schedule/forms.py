@@ -47,12 +47,11 @@ class InquiryForm(forms.Form):
 class ScheduleCreateForm(forms.ModelForm):
     class Meta:
         model = Schedule
-        fields = ('title', 'detail', 'location', 'url', 'date', 'start_at', 'end_at', 'music')
+        fields = ('title', 'detail', 'location', 'url', 'date', 'start_at', 'end_at', 'mae', 'naka', 'main', 'etc')
         widgets = {
             'date': forms.SelectDateWidget,
             'start_at': forms.TimeInput(format='%H:%M'),
             'end_at': forms.TimeInput(format='%H:%M'),
-            'music': forms.CheckboxSelectMultiple,
         }
 
     def __init__(self, *args, **kwargs):

@@ -1,21 +1,21 @@
 import logging
 from django.urls import reverse_lazy
 from django.views import generic
-from .forms import MusicCreateForm, StageCreateForm
+from .forms import MusicCreateForm, StageCreateForm, ConcertCreateForm, TermCreateForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Music, Stage
+from .models import Music, Stage, Concert, Term
 from schedule.views import paginate_queryset
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.utils.timezone import now
+import datetime
 
 logger = logging.getLogger(__name__)
 
 
 class MusicListView(LoginRequiredMixin, generic.ListView):
-    model = Music
+    model = Term
     template_name = 'music_list.html'
     paginate_by = 10
 
@@ -24,14 +24,35 @@ class MusicListView(LoginRequiredMixin, generic.ListView):
             messages.warning(self.request, 'パートが登録されていません！！マイページからパートを登録してください。')
         user_id = self.request.user.id
         context = super(MusicListView, self).get_context_data(**kwargs)
-        sql = f'SELECT * FROM music LEFT JOIN (SELECT * FROM music_stage WHERE user_id={user_id}) AS stage_table ON music.id=stage_table.music_id WHERE end_date >= current_date;'
-        past_sql = f'SELECT * FROM music LEFT JOIN (SELECT * FROM music_stage WHERE user_id={user_id}) AS stage_table ON music.id=stage_table.music_id WHERE end_date < current_date;'
-        music = Music.objects.raw(sql)
-        past_music = Music.objects.raw(past_sql)
-        page_obj = paginate_queryset(self.request, music, 10)
-        past_obj = paginate_queryset(self.request, past_music, 10)
-        context['page_obj'] = page_obj
-        context['past_obj'] = past_obj
+
+        this_term = Term.objects.filter(end_date__gte=datetime.date.today()).order_by("end_date").first()
+        next_term = Term.objects.filter(end_date__gt=this_term.end_date).order_by("end_date").first()
+        terms = Term.objects.order_by("-end_date")
+
+        this_term_concerts = Concert.objects.filter(term=this_term)
+        next_term_concerts = Concert.objects.filter(term=next_term)
+
+        this_term_id = this_term.id
+        this_sql = (f'SELECT * FROM music '
+                f'LEFT JOIN (SELECT * FROM music_stage WHERE user_id={user_id}) AS stage_table '
+                f'ON music.id=stage_table.music_id '
+                f'WHERE music.term_id={this_term_id};')
+        this_term_musics = Music.objects.raw(this_sql)
+
+        next_term_id = next_term.id
+        next_sql = (f'SELECT * FROM music '
+                f'LEFT JOIN (SELECT * FROM music_stage WHERE user_id={user_id}) AS stage_table '
+                f'ON music.id=stage_table.music_id '
+                f'WHERE music.term_id={next_term_id};')
+        next_term_musics = Music.objects.raw(next_sql)
+
+        context['this_term'] = this_term
+        context['this_term_concerts'] = this_term_concerts
+        context['this_term_musics'] = this_term_musics
+        context['next_term'] = next_term
+        context['next_term_concerts'] = next_term_concerts
+        context['next_term_musics'] = next_term_musics
+        context['terms'] = paginate_queryset(self.request, terms, 10)
         return context
 
 
@@ -48,11 +69,11 @@ class MusicDetailView(LoginRequiredMixin, UserPassesTestMixin, generic.DetailVie
     def get_context_data(self, **kwargs):
         pk = self.kwargs['pk']
         context = super().get_context_data(**kwargs)
-        string_sql = f'SELECT music_stage.id, state, music_id, user_id, username, nick_name, instrument_id, part.short_name FROM music_stage LEFT JOIN (SELECT id, username, nick_name, instrument_id FROM accounts_customuser) AS customuser ON user_id=customuser.id LEFT JOIN (SELECT * FROM part) AS part ON instrument_id=part.id WHERE string is true AND music_id={pk};'
+        string_sql = f'SELECT music_stage.id, state, music_id, user_id, username, nick_name, instrument_id, part.short_name FROM music_stage LEFT JOIN (SELECT id, username, nick_name, instrument_id FROM accounts_customuser) AS customuser ON user_id=customuser.id LEFT JOIN (SELECT * FROM part) AS part ON instrument_id=part.id WHERE string is true AND music_id={pk} ORDER BY instrument_id;'
         string_stages = Stage.objects.raw(string_sql)
         context['string_stages'] = string_stages
 
-        wind_sql = f'SELECT music_stage.id, state, music_id, user_id, username, nick_name, instrument_id, part.short_name FROM music_stage LEFT JOIN (SELECT id, username, nick_name, instrument_id FROM accounts_customuser) AS customuser ON user_id=customuser.id LEFT JOIN (SELECT * FROM part) AS part ON instrument_id=part.id WHERE string is false AND music_id={pk};'
+        wind_sql = f'SELECT music_stage.id, state, music_id, user_id, username, nick_name, instrument_id, part.short_name FROM music_stage LEFT JOIN (SELECT id, username, nick_name, instrument_id FROM accounts_customuser) AS customuser ON user_id=customuser.id LEFT JOIN (SELECT * FROM part) AS part ON instrument_id=part.id WHERE string is false AND music_id={pk} ORDER BY instrument_id;'
         wind_stages = Stage.objects.raw(wind_sql)
         context['wind_stages'] = wind_stages
 
@@ -75,9 +96,9 @@ class MusicCreateView(LoginRequiredMixin, UserPassesTestMixin, generic.CreateVie
         user = self.request.user
         return user.is_staff
 
-    def form_valid(self, form):
+    def form_valid(self, form, **kwargs):
         music = form.save(commit=False)
-        music.user = self.request.user
+        music.term = Term.objects.get(pk=self.kwargs['pk'])
         music.save()
         messages.success(self.request, '曲を作成しました。')
         return super().form_valid(form)
@@ -178,4 +199,116 @@ class StageDeleteView(LoginRequiredMixin, generic.DeleteView):
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "降り番になりました。")
+        return super().delete(request, *args, **kwargs)
+
+
+class ConcertCreateView(LoginRequiredMixin, UserPassesTestMixin, generic.CreateView):
+    model = Concert
+    template_name = 'concert_create.html'
+    form_class = ConcertCreateForm
+    success_url = reverse_lazy('music:music_list')
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff
+
+    def form_valid(self, form, **kwargs):
+        concert = form.save(commit=False)
+        concert.term = Term.objects.get(pk=self.kwargs['pk'])
+        concert.save()
+        messages.success(self.request, '本番の予定を作成しました。')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "本番の予定作成に失敗しました。")
+        return super().form_invalid(form)
+
+
+class ConcertUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
+    model = Concert
+    template_name = 'concert_update.html'
+    form_class = ConcertCreateForm
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff
+
+    def get_success_url(self):
+        return reverse_lazy('music:music_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, '本番予定を更新しました。')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "本番予定の更新に失敗しました。")
+        return super().form_invalid(form)
+
+
+class ConcertDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    model = Concert
+    template_name = 'concert_delete.html'
+    success_url = reverse_lazy('music:music_list')
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "本番予定を削除しました。")
+        return super().delete(request, *args, **kwargs)
+
+
+class TermCreateView(LoginRequiredMixin, UserPassesTestMixin, generic.CreateView):
+    model = Term
+    template_name = 'term_create.html'
+    form_class = TermCreateForm
+    success_url = reverse_lazy('music:music_list')
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff
+
+    def form_valid(self, form):
+        term = form.save(commit=True)
+        messages.success(self.request, '練習期間を作成しました。')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "練習期間作成に失敗しました。")
+        return super().form_invalid(form)
+
+
+class TermUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
+    model = Term
+    template_name = 'term_update.html'
+    form_class = TermCreateForm
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff
+
+    def get_success_url(self):
+        return reverse_lazy('music:music_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, '練習期間の情報を更新しました。')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "練習期間情報の更新に失敗しました。")
+        return super().form_invalid(form)
+
+
+class TermDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    model = Term
+    template_name = 'term_delete.html'
+    success_url = reverse_lazy('music:music_list')
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "練習期間情報を削除しました。")
         return super().delete(request, *args, **kwargs)

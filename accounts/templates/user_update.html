@@ -11,9 +11,9 @@
         <table class="table">
           {{ form.as_table }}
         </table>
-        <button class="btn btn-primary" type="submit">更新</button>
+        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-check"></i></button>
 
-        <a class="btn btn-secondary ml-2" href="{% url 'accounts:user_detail' object.pk %}">キャンセル</a>
+        <a class="btn btn-secondary ml-2" href="{% url 'accounts:user_detail' object.pk %}"><i class="fa-solid fa-xmark"></i></a>
       </form>
     </div>
   </div>

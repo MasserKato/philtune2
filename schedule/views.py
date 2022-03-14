@@ -5,11 +5,10 @@ from .forms import InquiryForm, ScheduleCreateForm, ReactionCreateForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Schedule, Reaction
-from music.models import Music
+from music.models import Music, Term
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.utils.timezone import now
 
 logger = logging.getLogger(__name__)
 
@@ -91,7 +90,6 @@ class ScheduleDetailView(LoginRequiredMixin, UserPassesTestMixin, generic.Detail
     template_name = 'schedule_detail.html'
 
     def test_func(self):
-        print(self.request.user.instrument)
         if self.request.user.instrument is None:
             return False
         else:
@@ -102,9 +100,10 @@ class ScheduleDetailView(LoginRequiredMixin, UserPassesTestMixin, generic.Detail
         context = super().get_context_data(**kwargs)
 
         schedule = Schedule.objects.get(id=pk)
-
-        for music in schedule.music.all():
-            sql = f"SELECT reaction.state, reaction.comment, music_stage.id, music_stage.state, username, nick_name, part.short_name FROM music_stage LEFT JOIN accounts_customuser ON user_id=accounts_customuser.id LEFT JOIN part ON instrument_id=part.id LEFT JOIN (SELECT * FROM schedule_reaction WHERE schedule_id={pk}) AS reaction ON reaction.user_id=music_stage.user_id WHERE music_id=1;"
+        practice_musics = Music.objects.filter(term=schedule.term)
+        for music in practice_musics:
+            context[f'{music.category}_music'] = music
+            print(music.id)
 
             string_sql = f"SELECT reaction.state AS syukketu, reaction.comment, music_stage.id, music_stage.state AS noriban, username, nick_name, part.short_name FROM music_stage LEFT JOIN accounts_customuser ON user_id=accounts_customuser.id LEFT JOIN part ON instrument_id=part.id LEFT JOIN (SELECT * FROM schedule_reaction WHERE schedule_id={pk}) AS reaction ON reaction.user_id=music_stage.user_id WHERE music_id={music.id} AND string is true;"
             string_reactions = Reaction.objects.raw(string_sql)
@@ -114,7 +113,7 @@ class ScheduleDetailView(LoginRequiredMixin, UserPassesTestMixin, generic.Detail
             wind_reactions = Reaction.objects.raw(wind_sql)
             context[f'{music.category}_wind_reactions'] = wind_reactions
 
-            your_part_sql = f"SELECT reaction.state AS syukketu, reaction.comment, music_stage.id, music_stage.state AS noriban, username, nick_name, part.short_name FROM music_stage LEFT JOIN accounts_customuser ON user_id=accounts_customuser.id LEFT JOIN part ON instrument_id=part.id LEFT JOIN (SELECT * FROM schedule_reaction WHERE schedule_id={pk}) AS reaction ON reaction.user_id=music_stage.user_id WHERE music_id=1 AND instrument_id={self.request.user.instrument.id};"
+            your_part_sql = f"SELECT reaction.state AS syukketu, reaction.comment, music_stage.id, music_stage.state AS noriban, username, nick_name, part.short_name FROM music_stage LEFT JOIN accounts_customuser ON user_id=accounts_customuser.id LEFT JOIN part ON instrument_id=part.id LEFT JOIN (SELECT * FROM schedule_reaction WHERE schedule_id={pk}) AS reaction ON reaction.user_id=music_stage.user_id WHERE music_id={music.id} AND instrument_id={self.request.user.instrument.id};"
             your_part_reactions = Reaction.objects.raw(your_part_sql)
             context[f'{music.category}_your_part_reactions'] = your_part_reactions
         
@@ -135,6 +134,8 @@ class ScheduleCreateView(LoginRequiredMixin, UserPassesTestMixin, generic.Create
 
     def form_valid(self, form):
         schedule = form.save(commit=False)
+        date = form.cleaned_data.get('date')
+        schedule.term = Term.objects.filter(end_date__gte=date, start_date__lte=date).first()
         schedule.user = self.request.user
         schedule.save()
         messages.success(self.request, '練習予定を作成しました。')
@@ -158,6 +159,11 @@ class ScheduleUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.Update
         return reverse_lazy('schedule:schedule_detail', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
+        schedule = form.save(commit=False)
+        date = form.cleaned_data.get('date')
+        schedule.term = Term.objects.filter(end_date__gte=date, start_date__lte=date).first()
+        schedule.user = self.request.user
+        schedule.save()
         messages.success(self.request, '練習予定を更新しました。')
         return super().form_valid(form)
 

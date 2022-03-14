@@ -1,5 +1,5 @@
 from accounts.models import CustomUser
-from music.models import Music
+from music.models import Music, Term
 from django.db import models
 from django.utils.timezone import now
 
@@ -15,7 +15,12 @@ class Schedule(models.Model):
     end_at = models.TimeField(verbose_name='終了時刻', default='17:00:00')
     created_at = models.DateTimeField(verbose_name='作成日時', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日時', auto_now=True)
+    mae = models.BooleanField(verbose_name='前曲', default=False)
+    naka = models.BooleanField(verbose_name='中曲', default=False)
+    main = models.BooleanField(verbose_name='メイン曲', default=False)
+    etc = models.BooleanField(verbose_name='その他', default=False)
     music = models.ManyToManyField(Music, verbose_name='練習する曲')
+    term = models.ForeignKey(Term, verbose_name='該当する練習期', on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Schedule'

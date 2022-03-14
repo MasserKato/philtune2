@@ -9,8 +9,8 @@
       <form method="POST">
         {% csrf_token %}
         <p>本当に乗り番を削除し、降り番になりますか？</p>
-        <button class="btn btn-danger" type="submit">降りる</button>
-        <a class="btn btn-secondary mt-5 ml-2" href="{% url 'music:music_detail' object.pk %}">キャンセル</a>
+        <button class="btn btn-danger mt-5 ml-2" type="submit"><i class="fa-solid fa-trash-can"></i></button>
+        <a class="btn btn-secondary mt-5 ml-2" href="{% url 'music:music_detail' object.pk %}"><i class="fa-solid fa-xmark"></i></a>
       </form>
     </div>
   </div>

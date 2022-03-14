@@ -7,8 +7,8 @@
 <div class="container">
   <div class="my-div-style w-100">
     {% if request.user.is_staff %}
-    <a class="btn btn-success mt-5 mb-3" href="{% url 'music:music_update' object.pk %}">編集</a>
-    <a class="btn btn-danger mt-5 mb-3" href="{% url 'music:music_delete' object.pk %}">削除</a>
+    <a class="btn btn-success mt-5 mb-3" href="{% url 'music:music_update' object.pk %}"><i class="fa-solid fa-pencil"></i></a>
+    <a class="btn btn-danger mt-5 mb-3" href="{% url 'music:music_delete' object.pk %}"><i class="fa-solid fa-trash-can"></i></a>
     {% endif %}
     <div class="row">
       <div class="col-3">

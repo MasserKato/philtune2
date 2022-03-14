@@ -8,8 +8,8 @@
   <div class="my-div-style w-100">
     <div class="clearfix">
     {% if request.user.is_staff %}
-        <a class="btn btn-success mt-5 mb-3 float-right" href="{% url 'schedule:schedule_update' object.pk %}">編集</a>
-        <a class="btn btn-danger mt-5 mb-3 float-right" href="{% url 'schedule:schedule_delete' object.pk %}">削除</a>
+        <a class="btn btn-success mt-5 mb-3" href="{% url 'schedule:schedule_update' object.pk %}"><i class="fa-solid fa-pencil"></i></a>
+        <a class="btn btn-danger mt-5 mb-3" href="{% url 'schedule:schedule_delete' object.pk %}"><i class="fa-solid fa-trash-can"></i></a>
     {% endif %}
     </div>
     <div class="row">
@@ -18,6 +18,15 @@
       </div>
       <div class="col-9">
         {{ object.title }}
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-3">
+        <strong>日付</strong>
+      </div>
+      <div class="col-9">
+        {{ object.date }}
       </div>
     </div>
     <hr>
@@ -63,9 +72,9 @@
         <strong>扱う曲</strong>
       </div>
           <div class="col-9">
-            {% for music in object.music.all %}
-            {{ music.title }}<br>
-            {% endfor %}
+            {% if object.mae %}前{% endif %}
+            {% if object.naka %}中{% endif %}
+            {% if object.main %}メイン{% endif %}
           </div>
 
     </div>
@@ -135,13 +144,13 @@
         <div class="card-body">
           <p>
             <a class="btn btn-outline-info" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">
-              前プロ
+              {% if 1_music.short_title is None %}前プロ{% else %}{{ 1_music.short_title }}{% endif %}
             </a>
             <a class="btn btn-outline-success" data-toggle="collapse" href="#multiCollapseExample2" role="button" aria-expanded="false" aria-controls="multiCollapseExample2">
-              中プロ
+              {% if 2_music.short_title is None %}中プロ{% else %}{{ 2_music.short_title }}{% endif %}
             </a>
             <a class="btn btn-outline-warning" data-toggle="collapse" href="#multiCollapseExample3" role="button" aria-expanded="false" aria-controls="multiCollapseExample3">
-              メイン
+              {% if 3_music.short_title is None %}メイン{% else %}{{ 3_music.short_title }}{% endif %}
             </a>
           </p>
           <div class="col">
@@ -269,13 +278,13 @@
         <div class="card-body">
           <p>
             <a class="btn btn-outline-info" data-toggle="collapse" href="#multiCollapseExample4" role="button" aria-expanded="false" aria-controls="multiCollapseExample4">
-              前プロ
+              {% if 1_music.short_title is None %}前プロ{% else %}{{ 1_music.short_title }}{% endif %}
             </a>
             <a class="btn btn-outline-success" data-toggle="collapse" href="#multiCollapseExample5" role="button" aria-expanded="false" aria-controls="multiCollapseExample5">
-              中プロ
+              {% if 2_music.short_title is None %}中プロ{% else %}{{ 2_music.short_title }}{% endif %}
             </a>
             <a class="btn btn-outline-warning" data-toggle="collapse" href="#multiCollapseExample6" role="button" aria-expanded="false" aria-controls="multiCollapseExample6">
-              メイン
+              {% if 3_music.short_title is None %}メイン{% else %}{{ 3_music.short_title }}{% endif %}
             </a>
           </p>
           <div class="col">
@@ -403,13 +412,13 @@
         <div class="card-body">
           <p>
             <a class="btn btn-outline-info" data-toggle="collapse" href="#multiCollapseExample7" role="button" aria-expanded="false" aria-controls="multiCollapseExample7">
-              前プロ
+              {% if 1_music.short_title is None %}前プロ{% else %}{{ 1_music.short_title }}{% endif %}
             </a>
             <a class="btn btn-outline-success" data-toggle="collapse" href="#multiCollapseExample8" role="button" aria-expanded="false" aria-controls="multiCollapseExample8">
-              中プロ
+              {% if 2_music.short_title is None %}中プロ{% else %}{{ 2_music.short_title }}{% endif %}
             </a>
             <a class="btn btn-outline-warning" data-toggle="collapse" href="#multiCollapseExample9" role="button" aria-expanded="false" aria-controls="multiCollapseExample9">
-              メイン
+              {% if 3_music.short_title is None %}メイン{% else %}{{ 3_music.short_title }}{% endif %}
             </a>
           </p>
           <div class="col">

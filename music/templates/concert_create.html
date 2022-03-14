@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}曲編集|Philtune{% endblock %}
+{% block title %}乗り番登録|Philtune{% endblock %}
 {% block music_active %}active{% endblock %}
 {% block contents %}
 <div class="container">
@@ -11,8 +11,7 @@
         <table class="table">
           {{ form.as_table }}
         </table>
-        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-check"></i></button>
-        <a class="btn btn-secondary ml-2" href="{% url 'music:music_detail' object.pk %}"><i class="fa-solid fa-xmark"></i></a>
+        <button class="btn btn-primary" type="submit">送信</button>
       </form>
     </div>
   </div>
