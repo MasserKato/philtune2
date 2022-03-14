@@ -99,7 +99,7 @@
                   <tbody>
                     {% for schedule in past_obj %}
                     <tr>
-                      <td>{{ schedule.date}}<br>{ schedule.start_at }}~{{ schedule.end_at }}</td>
+                      <td>{{ schedule.date}}<br>{{ schedule.start_at }}~{{ schedule.end_at }}</td>
                       <td><a href="{% url 'schedule:schedule_detail' schedule.pk %}">
                         {{ schedule.title}}
                       </a></td>
