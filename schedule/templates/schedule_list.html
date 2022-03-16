@@ -26,10 +26,10 @@
                 {% for schedule in page_obj %}
                 <tr>
                   <td>{{ schedule.date}}<br>{{ schedule.start_at }}~{{ schedule.end_at }}</td>
-                  {% if schedule.url == None %}
                   <td><a href="{% url 'schedule:schedule_detail' schedule.pk %}">
                     {{ schedule.title}}
                   </a></td>
+                  {% if schedule.url == None %}
                   <td>{{ schedule.location }}</td>
                   {% else %}
                   <td><a href="{{ schedule.url }}">{{ schedule.location }}</a></td>
