@@ -160,5 +160,5 @@ MESSAGE_TAGS = {
     messages.SUCCESS: 'alert alert-success',
     messages.INFO: 'alert alert-info',
 }
-DEFAULT_FROM_EMAIL = 'mkato.horn@icloud.com'
+DEFAULT_FROM_EMAIL = 'hikonii.mailer@gmail.com'
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
