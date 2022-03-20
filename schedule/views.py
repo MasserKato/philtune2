@@ -105,11 +105,11 @@ class ScheduleDetailView(LoginRequiredMixin, UserPassesTestMixin, generic.Detail
             context[f'{music.category}_music'] = music
             print(music.id)
 
-            string_sql = f"SELECT reaction.state AS syukketu, reaction.comment, music_stage.id, music_stage.state AS noriban, username, nick_name, part.short_name FROM music_stage LEFT JOIN accounts_customuser ON user_id=accounts_customuser.id LEFT JOIN part ON instrument_id=part.id LEFT JOIN (SELECT * FROM schedule_reaction WHERE schedule_id={pk}) AS reaction ON reaction.user_id=music_stage.user_id WHERE music_id={music.id} AND string is true;"
+            string_sql = f"SELECT reaction.state AS syukketu, reaction.comment, music_stage.id, music_stage.state AS noriban, username, nick_name, part.short_name FROM music_stage LEFT JOIN accounts_customuser ON user_id=accounts_customuser.id LEFT JOIN part ON instrument_id=part.id LEFT JOIN (SELECT * FROM schedule_reaction WHERE schedule_id={pk}) AS reaction ON reaction.user_id=music_stage.user_id WHERE music_id={music.id} AND string is true ORDER BY instrument_id;"
             string_reactions = Reaction.objects.raw(string_sql)
             context[f'{music.category}_string_reactions'] = string_reactions
 
-            wind_sql = f"SELECT reaction.state AS syukketu, reaction.comment, music_stage.id, music_stage.state AS noriban, username, nick_name, part.short_name FROM music_stage LEFT JOIN accounts_customuser ON user_id=accounts_customuser.id LEFT JOIN part ON instrument_id=part.id LEFT JOIN (SELECT * FROM schedule_reaction WHERE schedule_id={pk}) AS reaction ON reaction.user_id=music_stage.user_id WHERE music_id={music.id} AND wind is true;"
+            wind_sql = f"SELECT reaction.state AS syukketu, reaction.comment, music_stage.id, music_stage.state AS noriban, username, nick_name, part.short_name FROM music_stage LEFT JOIN accounts_customuser ON user_id=accounts_customuser.id LEFT JOIN part ON instrument_id=part.id LEFT JOIN (SELECT * FROM schedule_reaction WHERE schedule_id={pk}) AS reaction ON reaction.user_id=music_stage.user_id WHERE music_id={music.id} AND wind is true ORDER BY instrument_id;"
             wind_reactions = Reaction.objects.raw(wind_sql)
             context[f'{music.category}_wind_reactions'] = wind_reactions
 
