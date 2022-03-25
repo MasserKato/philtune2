@@ -73,8 +73,8 @@ class ScheduleListView(LoginRequiredMixin, generic.ListView):
             messages.warning(self.request, 'パートが登録されていません！！マイページからパートを登録してください。')
         user_id = self.request.user.id
         context = super(ScheduleListView, self).get_context_data(**kwargs)
-        sql = f'SELECT * FROM schedule_schedule LEFT JOIN (SELECT * FROM schedule_reaction WHERE user_id={user_id}) AS reaction_table ON schedule_schedule.id=reaction_table.schedule_id WHERE date >= current_date;'
-        past_sql = f'SELECT * FROM schedule_schedule LEFT JOIN (SELECT * FROM schedule_reaction WHERE user_id={user_id}) AS reaction_table ON schedule_schedule.id=reaction_table.schedule_id WHERE date < current_date;'
+        sql = f'SELECT * FROM schedule_schedule LEFT JOIN (SELECT * FROM schedule_reaction WHERE user_id={user_id}) AS reaction_table ON schedule_schedule.id=reaction_table.schedule_id WHERE date >= current_date ORDER BY date;'
+        past_sql = f'SELECT * FROM schedule_schedule LEFT JOIN (SELECT * FROM schedule_reaction WHERE user_id={user_id}) AS reaction_table ON schedule_schedule.id=reaction_table.schedule_id WHERE date < current_date ORDER BY date;'
         schedule = Schedule.objects.raw(sql)
         past_schedule = Schedule.objects.raw(past_sql)
         page_obj = paginate_queryset(self.request, schedule, 10)
