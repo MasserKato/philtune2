@@ -36,7 +36,7 @@ psql --version
 データベース作成
 ```
 brew services start postgresql@10
-createdb phitune
+createdb philtune
 ```
 確認
 ```
