@@ -13,37 +13,18 @@
     {% endif %}
     </div>
     <div class="row">
-      <div class="col-3">
-        <strong>練習名</strong>
-      </div>
-      <div class="col-9">
-        {{ object.title }}
+      <div class="col-12">
+        <strong><h3>{{ object.title }}</h3></strong>
       </div>
     </div>
-    <hr>
     <div class="row">
-      <div class="col-3">
-        <strong>日付</strong>
-      </div>
-      <div class="col-9">
+      <div class="col-12">
         {{ object.date }}
       </div>
     </div>
-    <hr>
     <div class="row">
-      <div class="col-3">
-        <strong>開始時刻</strong>
-      </div>
-      <div class="col-9">
-        {{ object.start_at }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-3">
-        <strong>終了時刻</strong>
-      </div>
-      <div class="col-9">
-        {{ object.end_at }}
+      <div class="col-12">
+        {{ object.start_at }}から{{ object.end_at }}まで
       </div>
     </div>
     <hr>
@@ -52,24 +33,18 @@
         <strong>場所</strong>
       </div>
           <div class="col-9">
+            {% if object.url == None %}
             {{ object.location }}
+            {% else %}
+            <a href="{{ object.url }}">{{ object.location }}</a>
+            {% endif %} 
           </div>
 
     </div>
     <hr>
     <div class="row">
       <div class="col-3">
-        <strong>場所URL</strong>
-      </div>
-          <div class="col-9">
-            {{ object.url }}
-          </div>
-
-    </div>
-    <hr>
-    <div class="row">
-      <div class="col-3">
-        <strong>扱う曲</strong>
+        <strong>曲</strong>
       </div>
           <div class="col-9">
             {% if object.mae %}前{% endif %}
@@ -81,7 +56,7 @@
       <hr>
     <div class="row">
       <div class="col-3">
-        <strong>本文</strong>
+        <strong>詳細(時間割)</strong>
       </div>
       <div class="col-9">
         {{ object.detail|linebreaksbr }}
@@ -90,36 +65,22 @@
     <hr>
     <div class="row">
       <div class="col-3">
-        <strong>作成日時</strong>
+        <strong>回答</strong>
       </div>
       <div class="col-9">
-        {{ object.created_at }}
+        <strong>{{ reaction.state }}</strong>
       </div>
     </div>
     <div class="row">
       <div class="col-3">
-        <strong>更新日時</strong>
       </div>
       <div class="col-9">
-        {{ object.updated_at }}
+        {{ reaction.comment }}
       </div>
     </div>
-    <hr>
     <div class="row">
-      <div class="col-3">
-        <strong>あなたの回答</strong>
-      </div>
-      <div class="col-9">
-        {{ reaction.state }}
-      </div>
-    </div>
-    <hr>
-    <div class="row">
-      <div class="col-3">
-        <strong>あなたのコメント</strong>
-        <div class="col-9">
-          {{ reaction.comment }}
-        </div>
+      <div class="col-12">
+        <small><p style="text-align:right">作成:{{ object.created_at }}<br>最終更新:{{ object.updated_at }}</p></small>
       </div>
     </div>
     
